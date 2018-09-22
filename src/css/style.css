@@ -1,0 +1,53 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+#loadingCopy {
+  color: white;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  font-size: 3em;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 auto;
+}
+
+#cvs-container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+}
+
+canvas#cvs {
+  /*background-color: #000;*/
+  border: 1px solid #FFF;
+  display: flex;
+  margin: 0 auto;
+  padding: 0;
+  width:465px;
+  /*width: 640px;*/
+  height: 351px;
+}
+
+
+#audio-button {
+  width: 32px;
+  height: 32px;  
+  position: absolute;
+  right: 10;
+  bottom: 10;
+  display:none;/* we don't show unless we have a background image */
+}
+
+/*#debug {
+  background-color: transparent;
+  color: #ff008d;
+  display: inline-block;
+  font-size: 14pt;
+  font-family: monospace;
+  position: absolute;
+  z-index: 1;
+}
+*/

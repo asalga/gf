@@ -1,0 +1,17 @@
+# System 
+Thumbs.db
+.DS_Store
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# dirs
+.tmp
+.sass-cache
+wip/
+app/
+
+#Node
+node_modules/
+/npm-debug.log
