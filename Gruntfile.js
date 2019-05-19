@@ -124,7 +124,7 @@ module.exports = function(grunt) {
           // MARKUP
           {
             expand: true,
-            cwd: `${src}/`,
+            cwd: `demo/`,
             src: 'index.html',
             dest: `${app}/`,
             filter: 'isFile'
@@ -132,11 +132,30 @@ module.exports = function(grunt) {
           // STYLE
           {
             expand: true,
-            cwd: `${src}/css/`,
+            cwd: `demo/css/`,
             src: '*.css',
             dest: `${app}/`,
             filter: 'isFile'
           },
+          // DEMO JS
+          {
+            expand: true,
+            cwd: `demo/src/`,
+            src: '*.js',
+            dest: `${app}/js`,
+            filter: 'isFile'
+          },
+          // DEMO LIBS
+          {
+            expand: true,
+            cwd: `demo/libs/`,
+            src: '*.js',
+            dest: `${app}/libs`,
+            filter: 'isFile'
+          },
+
+
+
           // DATA
           {
             expand: true,
@@ -145,16 +164,6 @@ module.exports = function(grunt) {
             dest: `${app}/data/`,
             filter: 'isFile'
           },
-
-          // JS
-          {
-            expand: true,
-            cwd: `${src}/data`,
-            src: '*.js',
-            dest: `${app}/`,
-            filter: 'isFile'
-          },
-
           // JS LIBS
           {
             expand: true,
@@ -163,7 +172,6 @@ module.exports = function(grunt) {
             dest: `${app}/libs`,
             filter: 'isFile'
           },
-
           // AUDIO
           {
             expand: true,
@@ -308,7 +316,7 @@ module.exports = function(grunt) {
       // STYLE
       style: {
         files: [
-          `src/css/style.css`
+          `demo/css/style.css`
         ],
         tasks: [
           'copy:dev'
@@ -320,11 +328,10 @@ module.exports = function(grunt) {
       // MARKUP
       markup: {
         files: [
-          `src/index.html`
+          `demo/index.html`
         ],
         tasks: [
-          // 'copy:dev'
-          'processhtml'
+          'copy:dev'
         ],
         options: {
           livereload: true
