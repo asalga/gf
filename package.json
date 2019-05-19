@@ -17,7 +17,7 @@
   "homepage": "https://github.com/asalga/gf#readme",
   "description": "",
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.4",
     "grunt-browserify": "^5.2.0",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
@@ -28,7 +28,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "gsap": "^1.20.2",
     "matchdep": "^1.0.1",
-    "serve-static": "^1.13.1"
+    "serve-static": "^1.14.1"
   },
   "dependencies": {}
 }

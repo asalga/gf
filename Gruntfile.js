@@ -346,7 +346,7 @@ module.exports = function(grunt) {
 
     // JS
     'bundle',
-    'jshint',
+    // 'jshint',
 
     // HTML
     // 'processhtml',
