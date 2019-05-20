@@ -15,11 +15,13 @@ module.exports = function(grunt) {
   };
 
   // directories
-  const src = 'src';
-  const tmp = '.tmp';
-  const app = 'app';
-  const lib = 'src/libs';
+  const src  = 'src';
+  const tmp  = '.tmp';
+  const demo = 'demo';
+  const app  = 'app';
+  const lib  = 'src/libs';
   const basePath = 'src/sketches/';
+
 
   let config = {
     // load by default if we can't find the target
@@ -119,6 +121,7 @@ module.exports = function(grunt) {
         }]
       },
 
+      // rename ? or have two dev demo?
       dev: {
         files: [
           // MARKUP
@@ -153,7 +156,15 @@ module.exports = function(grunt) {
             dest: `${app}/libs`,
             filter: 'isFile'
           },
-
+          // DEMO DATA
+          {
+            expand: true,
+            flatten: false,
+            cwd: `${demo}/data/`,
+            src: ['**/*.{jpg,jpeg,png,gif,svg}'],
+            dest: `${app}/data/`,
+            filter: 'isFile'
+          },
 
 
           // DATA
@@ -277,6 +288,19 @@ module.exports = function(grunt) {
           livereload: true
         }
       },
+      // DEMO
+      demo: {
+        files: [
+          `${demo}/**/*.js`
+        ],
+        tasks: [
+          'copy:dev'
+        ],
+        options: {
+          livereload: true
+        }
+      },
+
       // AUDIO
       audio: {
         files: [
