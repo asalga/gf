@@ -161,7 +161,7 @@ module.exports = function(grunt) {
             expand: true,
             flatten: false,
             cwd: `${demo}/data/`,
-            src: ['**/*.{jpg,jpeg,png,gif,svg}'],
+            src: ['**/*'],
             dest: `${app}/data/`,
             filter: 'isFile'
           },

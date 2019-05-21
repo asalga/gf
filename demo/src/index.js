@@ -1,7 +1,22 @@
 'use strict';
 
-import Assets from './assets/Assets.js';
 import manifest from './Manifest.js';
+
+
+import Utils from './Utils.js';
+import Debug from './debug/Debug.js';
+import Scene from './Scene.js';
+import Assets from './assets/Assets.js';
+
+import Event from './event/Event.js';
+import EventSystem from './event/EventSystem.js';
+
+import Renderer from './Renderer.js';
+
+import cfg from './cfg.js';
+// import Pool from './core/Pool.js';
+
+
 
 let assets;
 

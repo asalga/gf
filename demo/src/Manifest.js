@@ -6,5 +6,11 @@ export default {
   images: [{
     name: 'img',
     path: `${dataDir}/test.png`
+  }],
+
+  atlases: [{
+    name: 'pac',
+    imgPath: `${dataDir}/atlas/pac.png`,
+    metaPath: `${dataDir}/atlas/pac.json`
   }]
 };
