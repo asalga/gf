@@ -3,7 +3,7 @@
 import PriorityQueue from './core/PriorityQueue.js';
 import cfg from './cfg.js';
 
-function createLayer() {
+function createLayer(n) {
   let cvs = document.createElement('canvas');
   [cvs.width, cvs.height] = [cfg.gameWidth, cfg.gameHeight];
 
@@ -32,7 +32,7 @@ export default class Renderer {
     layerConfig.forEach(obj => {
       let layer = {
         'name': obj.name,
-        'p3': createLayer(),
+        'p3': createLayer(obj.name),
         'cfg': obj.cfg,
         'renderables': new PriorityQueue()
       };
@@ -42,7 +42,7 @@ export default class Renderer {
     });
   }
 
-  static render() {
+  static render(scene) {
 
     // TODO: remove?
     // p3.clear();

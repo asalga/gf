@@ -16,6 +16,7 @@ export default class Scene {
   constructor() {
     this.entities = new Set();
     this.user = null;
+    this.restartGameCallback = function(){};
 
     this.entitiesAddedOrRemovedDirty = false;
     this.deleteQueue = [];
@@ -72,6 +73,7 @@ export default class Scene {
     this.entities.clear();
     this.deleteQueue = [];
 
+    this.restartGameCallback();
     // let kblistener = EntityFactory.create('keyboardlistener');
 
     // this.add(EntityFactory.create('audioeventlistener'));

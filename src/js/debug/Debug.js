@@ -10,8 +10,7 @@ export default class Debug {
   static init(cfg) {
     document.addEventListener('keydown', function(evt) {
       if (evt.code === cfg.toggleKey) {
-        window.debug = !window.debug;
-        Debug.setOn(window.debug);
+       // Debug.setOn(window.debug);
       }
     });
   }
