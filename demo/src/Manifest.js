@@ -20,7 +20,7 @@ export default {
 
   atlases: [{
     name: 'pac',
-    imgPath: `${dir}/atlas/pac.png`,
-    metaPath: `${dir}/atlas/pac.json`
+    imgPath: `${dir}/atlas/pac/pac.png`,
+    metaPath: `${dir}/atlas/pac/pac.json`
   }]
 };

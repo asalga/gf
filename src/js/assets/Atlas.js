@@ -16,24 +16,42 @@ export default function Atlas(cfg) {
 }
 
 Atlas.prototype = {
+
+  /*
+    Do NOT use the filename extension (.png, .jpg);
+  */
   get(str) {
     return this.frames[str];
   },
 
+  /*
+   */
   split() {
-    let sheetFramesObj = JSON.parse(this.meta)['frames'];
+    let sheetData = JSON.parse(this.meta)['frames'];
+    let arr;
 
-    let arr = Object.entries(sheetFramesObj);
+    if (Array.isArray(sheetData)) {
+      arr = sheetData;
 
-    arr.forEach( (f, i) => {
-      let filename = f[0];
-      let frame = f[1].frame;
+      arr.forEach( f => {
+        let filename = f.filename;
+        let frame = f.frame;
 
-      // remove '.png' part of filename, we don't need it.
-      let imgName = filename.split('.')[0];
+        // remove '.png' part of filename, we don't need it.
+        let imgName = filename.split('.')[0];
+        this.frames[imgName] = this.p5Img.get(frame.x, frame.y, frame.w, frame.h);
+      });
 
-      this.frames[imgName] = this.p5Img.get(frame.x, frame.y, 
-                                            frame.w, frame.h);
-    });
+    } else {
+      arr = Object.entries(sheetData);
+      arr.forEach((f, i) => {
+        let filename = f[0];
+        let frame = f[1].frame;
+
+        // remove '.png' part of filename, we don't need it.
+        let imgName = filename.split('.')[0];
+        this.frames[imgName] = this.p5Img.get(frame.x, frame.y, frame.w, frame.h);
+      });
+    }
   }
 };

@@ -2,8 +2,6 @@
 
 // const Howler = require('Howler');
 // const Howl = require('Howler').Howl;
-// import manifest from './Manifest.js';
-
 
 import Atlas from './Atlas.js';
 

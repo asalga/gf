@@ -60,7 +60,7 @@ function render() {
 }
 
 function preRender() {
-  background(100);
+  background(0);
   Renderer.preRender();
 }
 

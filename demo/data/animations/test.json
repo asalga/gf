@@ -1,15 +1,8 @@
 {
-  "enter_hurt": {
-    "type": "frames",
-    "framedata": "rat.json",
-    "time": 500,
-    "frames": ["enter_hurt_0", "enter_hurt_1"]
-  },
-
-  "exit": {
-    "type": "frames",
-    "framedata": "rat.json",
-    "frameimg": "sheet.png",
-    "frames": ["enter1", "enter2", "enter3"]
-  }
+    "ghost_walk":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["image_part_059", "image_part_060"]
+    }
 }

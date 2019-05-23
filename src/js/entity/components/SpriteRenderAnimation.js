@@ -30,10 +30,20 @@ export default class SpriteRenderAnimation extends Component {
 
     this.dirty = true;
     this.sprite = this.cfg.cvs;
+
+    this.frame = 0;
   }
 
-  draw() {
-    // this.drawProxy();
+  draw(p) {
+    let frames = this.animations["ghost_walk"].frames;
+
+    this.frame = (millis()*4 % 1000) < 500 ? 0 : 1;
+
+    let img = this.atlas.get(frames[this.frame]);
+
+    p.image(img, this.entity.pos.x, this.entity.pos.y);
+    
+    this.drawProxy && this.drawProxy();
   }
 
   update(dt) {

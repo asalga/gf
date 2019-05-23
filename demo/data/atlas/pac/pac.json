@@ -1263,10 +1263,10 @@
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
 	"version": "1.0",
-	"image": "dat.png",
+	"image": "pac.png",
 	"format": "RGBA8888",
 	"size": {"w":128,"h":256},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b69c390e1a77a75a5c2bf6e2fd33e5f3:6eda2124177988e014efd167877bfece:000942f68b8d0b7813c2cf6e26c2f5a4$"
+	"smartupdate": "$TexturePacker:SmartUpdate:35481b23c6df75159005ddbf8fbd41cc:6eda2124177988e014efd167877bfece:fe53866cf0063938a8950427ddba6509$"
 }
 }

@@ -16,7 +16,7 @@ export default class Killable extends Component {
 
     this.entity.vel.set(random(-1, 1), random(-1, 1));
     this.entity.vel.normalize();
-    this.entity.vel.mult(250);
+    this.entity.vel.mult(50);
   }
 
   update(dt, entity) {
