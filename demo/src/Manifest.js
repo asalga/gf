@@ -1,16 +1,26 @@
 'use strict';
 
-let dataDir = '../data';
+let dir = '../data';
 
 export default {
   images: [{
-    name: 'img',
-    path: `${dataDir}/test.png`
+      name: 'img',
+      path: `${dir}/test.png`
+    },
+    {
+      name: 'node',
+      path: `${dir}/node.png`
+    }
+  ],
+
+  animations: [{
+    name: 'test',
+    path: `${dir}/animations/test.json`
   }],
 
   atlases: [{
     name: 'pac',
-    imgPath: `${dataDir}/atlas/pac.png`,
-    metaPath: `${dataDir}/atlas/pac.json`
+    imgPath: `${dir}/atlas/pac.png`,
+    metaPath: `${dir}/atlas/pac.json`
   }]
 };

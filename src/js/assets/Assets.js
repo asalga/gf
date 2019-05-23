@@ -22,12 +22,20 @@ export default function Assets(manifest) {
   this.assetTypes = {
     'image': {},
     'atlas': {},
+    'animations': {},
     'audio': {},
     'json': {},
     'shaders': {}
   };
 
   this.numAssetsLoaded = 0;
+  this.totalAssetsToLoad = 0;
+
+  // Count how many we need to load so we can compare as we load the assets
+  let assetsToLoad = Object.values(manifest);
+  assetsToLoad.forEach(assetType => {
+    this.totalAssetsToLoad += assetType.length;
+  });
 
   /*
    */
@@ -59,9 +67,9 @@ export default function Assets(manifest) {
 
             that.assetTypes['atlas'][a.name] = atlas;
             that.numAssetsLoaded++;
-            
+
             that.checkIfDone();
-            console.log('loaded atlas: ', a.name);
+            console.log('Asset: loaded atlas: ', a.name);
           };
           xhr.open('GET', a.metaPath);
           xhr.send();
@@ -119,7 +127,7 @@ export default function Assets(manifest) {
           };
 
           that.checkIfDone();
-          console.log('loaded shader: ', n);
+          console.log('Asset: loaded shader: ', n);
           that.numAssetsLoaded++;
         });
 
@@ -128,7 +136,7 @@ export default function Assets(manifest) {
 
     //
     //
-    // ** JSON
+    // ** GENERIC GAME SPECIFIC JSON
     //
     if (manifest.json) {
       manifest.json.forEach(j => {
@@ -148,7 +156,33 @@ export default function Assets(manifest) {
             that.assetTypes['json'][data.n] = data.json;
 
             that.checkIfDone();
-            console.log('loaded  json: ', j.name);
+            console.log('Asset: loaded json: ', j.name);
+          });
+      });
+    }
+
+    //
+    // ** ANIMATION
+    //
+    if (manifest.animations) {
+      manifest.animations.forEach(j => {
+        let n = j.name;
+
+        fetch(j.path)
+          .then(function(response) {
+            return response.json().then(data => {
+              return {
+                n: j.name,
+                animations: data
+              }
+            });
+          })
+          .then(function(data) {
+            that.numAssetsLoaded++;
+            that.assetTypes['animations'][data.n] = data.animations;
+
+            that.checkIfDone();
+            console.log('Asset: loaded animation: ', j.name);
           });
       });
     }
@@ -162,7 +196,7 @@ export default function Assets(manifest) {
           that.assetTypes['image'][v.name] = p5img;
 
           that.checkIfDone();
-          console.log('loaded image: ', v.name);
+          console.log('Asset: loaded image: ', v.name);
         });
       });
     }
@@ -170,23 +204,15 @@ export default function Assets(manifest) {
   };
 
   /*
-    TODO: fix
-   */
+  */
   this.checkIfDone = function() {
-    let numAtlases = (manifest.atlases && manifest.atlases.length) || 0;
-    let numAudio = (manifest.audio && manifest.audio.length) || 0;
-    let numImages = (manifest.images && manifest.images.length) || 0;
-    let numDatas = (manifest.json && manifest.json.length) || 0;
-    let numShaders = (manifest.shaders && manifest.shaders.length) || 0;
 
-    let totalAssets = numImages + numAtlases + numAudio + numDatas + numShaders;
-
-    if (this.numAssetsLoaded === totalAssets && this.cbCalled === false) {
+    if (this.numAssetsLoaded === this.totalAssetsToLoad && this.cbCalled === false) {
       this.cbCalled = true;
       this.cb();
     }
 
-    return this.numAssetsLoaded === totalAssets;
+    return this.numAssetsLoaded === this.totalAssetsToLoad;
   };
 
   /*
