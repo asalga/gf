@@ -5,10 +5,12 @@
 
 import empty from './actors/Empty.js';
 import ball from './actors/pong/Ball.js';
+import inky from './actors/pac/Inky.js';
 
 let createFuncs = new Map([
   ['empty', empty],
-  ['ball', ball]
+  ['ball', ball],
+  ['inky', inky]
 ]);
 
 export default class gfEntityFactory {

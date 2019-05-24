@@ -35,7 +35,7 @@ export default class SpriteRenderAnimation extends Component {
   }
 
   draw(p) {
-    let frames = this.animations["ghost_walk"].frames;
+    let frames = this.animations["blinky_left"].frames;
 
     this.frame = (millis()*4 % 1000) < 500 ? 0 : 1;
 

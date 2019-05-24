@@ -16,11 +16,24 @@ export default class Scene {
   constructor() {
     this.entities = new Set();
     this.user = null;
-    this.restartGameCallback = function(){};
+    this.restartGameCallback = function() {};
 
     this.entitiesAddedOrRemovedDirty = false;
     this.deleteQueue = [];
     this.eventsToFireNextFrame = [];
+  }
+
+  findEntity(name) {
+    let entity = null;
+    let found = false;
+
+    scene.entities.forEach(e => {
+      if (e.name === name && found === false) {
+        entity = e;
+        found = true;
+      }
+    });
+    return entity;
   }
 
   update(dt) {
@@ -79,7 +92,7 @@ export default class Scene {
     // this.add(EntityFactory.create('audioeventlistener'));
 
     // this.add(EntityFactory.create('background'));
-    
+
     // this.add(EntityFactory.create('ui'));
   }
 

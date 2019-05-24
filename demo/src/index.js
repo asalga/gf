@@ -20,6 +20,7 @@ import EntityFactory from './entity/EntityFactory.js';
 let assets;
 let scene;
 
+
 let preloadCallback = function() {
   console.log('preload callback');
 
@@ -29,11 +30,22 @@ let preloadCallback = function() {
 
   scene = new Scene();
   scene.restartGame();
+  window.scene = scene;
 
   createCanvas(400, 400);
 
-  let e = EntityFactory.create('ball');
-  scene.add(e);
+  scene.add(EntityFactory.create('ball'));
+
+  for (let i = 0; i < 50; i++) {
+    let x = random(-200, 200);
+    let y = random(-200, 200);
+
+    let e = EntityFactory.create('inky');
+    e.pos.set(x,y);
+
+    scene.add(e);
+  }
+  // scene.add(EntityFactory.create('inky'));
 }
 
 window.preload = function() {
@@ -81,3 +93,8 @@ window.draw = function() {
   render();
   postRender();
 };
+
+window.mousePressed = function() {
+  let inky = scene.findEntity('inky');
+  scene.remove(inky);
+}

@@ -25,7 +25,7 @@ window.count = 50;
 export default class Pool {
 
   static init() {
-    Pool.allocate({ name: 'vec2', type: Vec2, count: 400, growth: 0 });
+    Pool.allocate({ name: 'vec2', type: Vec2, count: 10, growth: 0 });
     // Pool.allocate({ name: 'bullet', createFunc: UserBullet, count: window.count });
     // Pool.allocate({ name: 'plasmabullet', createFunc: PlasmaBullet, count: 40 });
     // Pool.allocate({ name: 'freezebullet', createFunc: FreezeBullet, count: 40 });
@@ -45,15 +45,19 @@ export default class Pool {
     pools[n] = new Array(cfg.count);
     let newPool = pools[n];
 
-    for (let i = 0; i < cfg.count; i++) {
+    Pool.callCreateFuncs(newPool, 0, cfg.count, cfg);
+  }
+
+  static callCreateFuncs(p, s, e, cfg){
+    for (let i = s; i < e; i++) {
 
       if (cfg.createFunc) {
-        newPool[i] = cfg.createFunc();
+        p[i] = cfg.createFunc();
       } else {
-        newPool[i] = new cfg.type;
+        p[i] = new cfg.type;
       }
 
-      newPool[i]._pool = {
+      p[i]._pool = {
         available: true,
         idx: i,
         name: cfg.name
@@ -61,13 +65,26 @@ export default class Pool {
     }
   }
 
+  /*
+  */
+  static grow(n){
+    let pool = pools[n];
+    let oldSize = pool.length;
+    
+    let newSize = oldSize * 2;
+    pool.length = newSize;
+
+    Pool.callCreateFuncs(pool, oldSize, newSize * 2, {name: 'vec2', type: Vec2});
+  }
+
   static free(obj) {
     let meta = obj._pool;
     pools[meta.name][meta.idx]._pool.available = true;
 
-    if (obj.name === 'bullet') {
-      window.count++;
-    }
+    console.log(obj);
+    // if (obj.name === 'bullet') {
+    //   window.count++;
+    // }
   }
 
   static get(n) {
@@ -76,9 +93,9 @@ export default class Pool {
     for (let i = 0; i < pool.length; ++i) {
       if (pool[i]._pool.available) {
 
-        if (n === 'bullet') {
-          window.count--;
-        }
+        // if (n === 'bullet') {
+        //   window.count--;
+        // }
 
         let obj = pool[i];
         obj._pool.available = false;
@@ -89,6 +106,8 @@ export default class Pool {
 
     // TODO: fix
     console.error('no free objects available!');
-    debugger;
+    Pool.grow(n);
+
+    return Pool.get(n);
   }
 }

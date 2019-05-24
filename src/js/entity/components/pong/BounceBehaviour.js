@@ -3,7 +3,7 @@
 import Component from '../Component.js';
 import Utils from '../../../Utils.js';
 
-export default class Killable extends Component {
+export default class BounceBehaviour extends Component {
 
   constructor(e, cfg) {
     super(e, 'killable');

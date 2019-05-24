@@ -90,6 +90,10 @@ export default class Vec2 {
     return Math.sqrt(Vec2.dot(this, this));
   }
 
+  mag(){
+    return this.length();
+  }
+
   lengthSq() {
     return Vec2.dot(this, this);
   }
