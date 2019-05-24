@@ -20,7 +20,6 @@ export default class FollowBehaviour extends Component {
     this.steer = Pool.get('vec2');
 
     let defaults = {
-      // speed: 100.5,
       maxSpeed: 200,
       maxSteering: 1
     };

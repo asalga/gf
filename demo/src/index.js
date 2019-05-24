@@ -36,7 +36,7 @@ let preloadCallback = function() {
 
   scene.add(EntityFactory.create('ball'));
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 200; i++) {
     let x = random(-200, 200);
     let y = random(-200, 200);
 

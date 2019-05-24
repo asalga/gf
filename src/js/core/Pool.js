@@ -1,11 +1,6 @@
 'use strict';
 
 import Vec2 from '../math/Vec2.js';
-// import UserBullet from '../entity/actors/UserBullet.js';
-// import PlasmaBullet from '../entity/actors/UserPlasmaBullet.js';
-// import FreezeBullet from '../entity/actors/UserFreezeBullet.js';
-// import FlakBullet from '../entity/actors/UserFlakBullet.js';
-
 
 /*
   Req.
@@ -20,16 +15,12 @@ import Vec2 from '../math/Vec2.js';
 */
 
 let pools = {};
-window.count = 50;
 
 export default class Pool {
 
   static init() {
-    Pool.allocate({ name: 'vec2', type: Vec2, count: 10, growth: 0 });
+    Pool.allocate({ name: 'vec2', type: Vec2, count: 10 });
     // Pool.allocate({ name: 'bullet', createFunc: UserBullet, count: window.count });
-    // Pool.allocate({ name: 'plasmabullet', createFunc: PlasmaBullet, count: 40 });
-    // Pool.allocate({ name: 'freezebullet', createFunc: FreezeBullet, count: 40 });
-    // Pool.allocate({ name: 'flakbullet', createFunc: FlakBullet, count: 200 });
   }
 
   /*
@@ -37,7 +28,6 @@ export default class Pool {
       name {String}
       type {Function}
       count {Number}
-      growth {Number}
   */
   static allocate(cfg) {
     let n = cfg.name;
@@ -48,7 +38,7 @@ export default class Pool {
     Pool.callCreateFuncs(newPool, 0, cfg.count, cfg);
   }
 
-  static callCreateFuncs(p, s, e, cfg){
+  static callCreateFuncs(p, s, e, cfg) {
     for (let i = s; i < e; i++) {
 
       if (cfg.createFunc) {
@@ -66,25 +56,21 @@ export default class Pool {
   }
 
   /*
-  */
-  static grow(n){
+   */
+  static grow(n) {
     let pool = pools[n];
     let oldSize = pool.length;
-    
+
     let newSize = oldSize * 2;
     pool.length = newSize;
+    console.info(`Pool: No free slots for "${n}". Growing to: ${newSize}.`);
 
-    Pool.callCreateFuncs(pool, oldSize, newSize * 2, {name: 'vec2', type: Vec2});
+    Pool.callCreateFuncs(pool, oldSize, newSize * 2, { name: 'vec2', type: Vec2 });
   }
 
   static free(obj) {
     let meta = obj._pool;
     pools[meta.name][meta.idx]._pool.available = true;
-
-    console.log(obj);
-    // if (obj.name === 'bullet') {
-    //   window.count++;
-    // }
   }
 
   static get(n) {
@@ -104,8 +90,6 @@ export default class Pool {
       }
     }
 
-    // TODO: fix
-    console.error('no free objects available!');
     Pool.grow(n);
 
     return Pool.get(n);
