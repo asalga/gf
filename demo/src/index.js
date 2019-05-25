@@ -24,7 +24,9 @@ let scene;
 let preloadCallback = function() {
   console.log('preload callback');
 
-  Pool.init();
+  Pool.init([{
+    // Pool.allocate({ name: 'vec2', type: Vec2, count: 500 });
+  }]);
   Debug.init({ toggleKey: 'Escape' });
   Renderer.init();
 
@@ -36,7 +38,7 @@ let preloadCallback = function() {
 
   scene.add(EntityFactory.create('ball'));
 
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 1000; i++) {
     let x = random(-200, 200);
     let y = random(-200, 200);
 
@@ -60,14 +62,11 @@ window.setup = function() {
 };
 
 function update(dt) {
-  Debug.add(`Root Entity count: ${scene.entities.size}`);
-
+  // Debug.add(`Root Entity count: ${scene.entities.size}`);
   scene.update(dt);
 }
 
 function render() {
-  // let img = assets.get('image', 'img');
-  // image(img, 0, 0);
   Renderer.render(scene);
 }
 
@@ -77,24 +76,22 @@ function preRender() {
 }
 
 function postRender() {
-  let bytes = window.performance.memory.totalJSHeapSize.toLocaleString();
-  Debug.add(`heap: ${bytes} bytes`);
-  Debug.draw();
-  Debug.postRender();
+  // let bytes = window.performance.memory.totalJSHeapSize.toLocaleString();
+  // Debug.add(`heap: ${bytes} bytes`);
+  // Debug.draw();
+  // Debug.postRender();
   Renderer.postRender();
 }
 
 window.draw = function() {
   if (!assets.checkIfDone()) { return; }
-
   update(0.016);
-
   preRender();
   render();
   postRender();
 };
 
 window.mousePressed = function() {
-  let inky = scene.findEntity('inky');
+  let inky = scene.findEntity('ball');
   scene.remove(inky);
 }

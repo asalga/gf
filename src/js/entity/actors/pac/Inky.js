@@ -31,8 +31,8 @@ export default function createInky() {
   let followBehaviour = new FollowBehaviour(e, {
     // target: 'cursor'
     target: scene.findEntity('ball'),
-    maxSpeed: 130,
-    maxSteering: 1
+    maxSpeed: 50,
+    maxSteering: random(0.1, 0.5)
   });
 
   e.addComponent(spriteRenderAni);

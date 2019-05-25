@@ -5,6 +5,7 @@ export default class Vec2 {
     window.vec2Ctor++;
 
     let x, y;
+    let arr = new Array(100);
 
     if (arguments.length === 0) {
       x = y = 0;
@@ -18,7 +19,7 @@ export default class Vec2 {
     this.set(x, y);
   }
 
-  reset(){
+  reset() {
     this.zero();
   }
 
@@ -30,17 +31,41 @@ export default class Vec2 {
     this.x = this.y = 0;
   }
 
-  set() {
-    switch (arguments.length) {
-      case 1:
-        this.x = arguments[0].x;
-        this.y = arguments[0].y;
-        break;
-      case 2:
-        this.x = arguments[0];
-        this.y = arguments[1];
-    }
+  setV(a) {
+    this.x = a.x;
+    this.y = a.y;
     return this;
+  }
+
+  setXY(x,y){
+    this.x = x;
+    this.y = y;
+    return this;
+  }
+
+  set() {
+
+    if (arguments.length === 1) {
+      this.x = arguments[0].x;
+      this.y = arguments[0].y;
+      return this;
+    }
+
+    if (arguments.length === 2) {
+      this.x = arguments[0];
+      this.y = arguments[1];
+      return this;
+    }
+
+    // switch (arguments.length) {
+    //   case 1:
+
+    //     break;
+    //   case 2:
+    //     this.x = arguments[0];
+    //     this.y = arguments[1];
+    // }
+    // return this;
   }
 
   add(v) {
@@ -90,7 +115,7 @@ export default class Vec2 {
     return Math.sqrt(Vec2.dot(this, this));
   }
 
-  mag(){
+  mag() {
     return this.length();
   }
 

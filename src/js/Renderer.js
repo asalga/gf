@@ -25,7 +25,6 @@ let layerConfig = [
 let layerMap = new Map();
 let layers = [];
 
-
 export default class Renderer {
 
   static init() {
@@ -43,6 +42,7 @@ export default class Renderer {
   }
 
   static render(scene) {
+    let i, layer;
 
     // TODO: remove?
     // p3.clear();
@@ -52,42 +52,79 @@ export default class Renderer {
 
       if (e.visible === false || e.opacity === 0) { return; }
 
-
       // TODO: this needs to be recursive!
-
       // CHILDREN
-      e.children.forEach(e => {
+      // e.children.forEach(e => {
+      //   //  e.opacity = rootOpacity;
+      //   if (e.components) {
+      //     e.components.forEach(c => {
 
-        // console.log(e.name);
+      //       //  c.opacity = rootOpacity;
+      //       if (c.renderable && c.visible) {
+      //         let layer = layerMap.get(c.layerName);
+      //         // Layer may not exist if we are debugging
+      //         layer && layer.renderables.enqueue(c, c.zIndex);
+      //       }
+      //     });
+      //   }
+      // });
 
-        //  e.opacity = rootOpacity;
+
+      for (i = 0; i < e.children.length; i++) {
+        let e = e.children[i];
+
         if (e.components) {
-          e.components.forEach(c => {
 
+          for (let c = 0; c < e.components.length; i++) {
+            // e.components.forEach(c => {
             //  c.opacity = rootOpacity;
             if (c.renderable && c.visible) {
               let layer = layerMap.get(c.layerName);
               // Layer may not exist if we are debugging
               layer && layer.renderables.enqueue(c, c.zIndex);
             }
-          });
-        }
-      });
+            // });
+          }
+          // e.components.forEach(c => {
 
-      // COMPONENTS
-      e.components.forEach(c => {
+          //   //  c.opacity = rootOpacity;
+          //   if (c.renderable && c.visible) {
+          //     let layer = layerMap.get(c.layerName);
+          //     // Layer may not exist if we are debugging
+          //     layer && layer.renderables.enqueue(c, c.zIndex);
+          //   }
+          // });
+        }
+      }
+
+
+
+
+      for (let i = 0; i < e.components.length; i++) {
+        let c = e.components[i];
         if (c.renderable && c.visible) { // && c.opacity > 0
           // c.opacity = rootOpacity;
-          let layer = layerMap.get(c.layerName);
+          layer = layerMap.get(c.layerName);
           layer && layer.renderables.enqueue(c, c.zIndex);
         }
-      });
+      }
+
+      // // COMPONENTS
+      // e.components.forEach(c => {
+      //   if (c.renderable && c.visible) { // && c.opacity > 0
+      //     // c.opacity = rootOpacity;
+      //     let layer = layerMap.get(c.layerName);
+      //     layer && layer.renderables.enqueue(c, c.zIndex);
+      //   }
+      // });
 
     });
 
 
-    // Draw the entities onto their layers
-    layers.forEach(_layer => {
+
+  // // Draw the entities onto their layers
+    for(let i = 0; i < layers.length; i++){
+      let _layer = layers[i];
       let _p3 = _layer.p3;
 
       if (_layer.cfg.clearFrame) {
@@ -100,14 +137,29 @@ export default class Renderer {
         let c = q.dequeue();
         c.draw(_p3);
       }
-    });
+    }
+    // // Draw the entities onto their layers
+    // layers.forEach(_layer => {
+    //   let _p3 = _layer.p3;
+
+    //   if (_layer.cfg.clearFrame) {
+    //     // _p3.clearAll(); ???
+    //     _p3.clear();
+    //   }
+
+    //   let q = _layer.renderables;
+    //   while (q.isEmpty() === false) {
+    //     let c = q.dequeue();
+    //     c.draw(_p3);
+    //   }
+    // });
+
 
     // Draw all the layers onto the main canvas
-    layers.forEach(layer => {
-      // console.log(layer.name);
-      // drawImage(layer.p3.cvs, 0, 0)
-      image(layer.p3, 0, 0)
-    });
+    // layers.forEach(layer => image(layer.p3, 0, 0));
+    for (let i = 0; i < layers.length; i++) {
+      image(layers[i].p3, 0, 0);
+    }
   }
 
   static preRender() {}

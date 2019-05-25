@@ -83,49 +83,48 @@ export default class Entity {
     debugger;
   }
 
+  /*
+   */
   update(dt) {
+
     // TODO: replace with assert
     if (Number.isNaN(this.vel.x)) {
       /*jshint -W087 */
       debugger;
     }
 
-    // let deltaTime = dt * this.timeScale;
-    let deltaTime = dt; // * this.timeScale;
+    this.updateProxy && this.updateProxy(dt);
 
-    this.updateProxy && this.updateProxy(deltaTime);
 
-    this.components.forEach(c => {
-      // ok if no update method?
-      // add in entity on creation or update?
+    let c;
+    for(let i = 0; i < this.components.length; i++){
+      c = this.components[i];
       c.update && c.update(dt, this);
       c.updateProxy && c.updateProxy(dt);
-    });
-    //
-    if (this.vel) {
-      //let d = this.vel.clone().mult(deltaTime * this.timeScale);
-
-      _temp.set(this.vel);
-      Vec2.multSelf(_temp, deltaTime * this.timeScale);
-
-      // let [x, y] = [
-      // this.vel.x * deltaTime * this.timeScale,
-      // this.vel.y * deltaTime * this.timeScale
-      // ];
-      this.pos.x += _temp.x;
-      this.pos.y += _temp.y;
-
-      // Vec2.addSelf(this.pos,  );
-      // this.pos.add(d);
     }
 
-    this.children.forEach(c => {
-      c.update(deltaTime);
-    });
+    // this.components.forEach(c => {
+    //   // ok if no update method?
+    //   // add in entity on creation or update?
+    //   c.update && c.update(dt, this);
+    //   c.updateProxy && c.updateProxy(dt);
+    // });
 
-    // Debug.add(`Entity #${this.id} "${this.name}" ${this.pos.x} `);
-    // if (this.health) {Debug.add(`Entity ${this.health.amt} `);}
-    // Health: ${this.health.amt}`
+    //
+    if (this.vel) {
+      // _temp.set(this.vel);
+      // _temp.mult(dt * this.timeScale);
+      // this.pos.add(_temp);
+      this.pos.x += this.vel.x * dt * this.timeScale;
+      this.pos.y += this.vel.y * dt * this.timeScale;
+    }
+
+    for(let i = 0; i < this.children.length; i++){
+      this.children[i].update(dt);
+    }
+    // this.children.forEach(c => {
+      // c.update(dt);
+    // });
   }
 
   /*

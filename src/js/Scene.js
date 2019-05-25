@@ -69,7 +69,10 @@ export default class Scene {
       Utils.clearArray(this.deleteQueue);
     }
 
-    this.entities.forEach(e => e.update(dt));
+    // this.entities.forEach(e => e.update(dt));
+    for( let o of this.entities){
+      o.update(dt);
+    }
   }
 
   clearFlags() {

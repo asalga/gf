@@ -18,6 +18,7 @@ export default class FollowBehaviour extends Component {
     this.toTarget = Pool.get('vec2');
     this.desired = Pool.get('vec2');
     this.steer = Pool.get('vec2');
+    this.str = 'cursor';
 
     let defaults = {
       maxSpeed: 200,
@@ -27,10 +28,12 @@ export default class FollowBehaviour extends Component {
   }
 
   update(dt, entity) {
-    if (this.target === 'cursor') {
+
+    if (this.target === this.str) {
       this.targetPos.set(mouseX, mouseY);
-    } else {
-      this.targetPos.set(this.target.pos.x, this.target.pos.y);
+    } 
+    else {
+      this.targetPos.setV(this.target.pos);
     }
 
     this.seek();
@@ -50,13 +53,13 @@ export default class FollowBehaviour extends Component {
   }
 
   seek() {
-    this.toTarget.set(this.targetPos.x - this.entity.pos.x, this.targetPos.y - this.entity.pos.y);
+    this.toTarget.setXY(this.targetPos.x - this.entity.pos.x, this.targetPos.y - this.entity.pos.y);
 
-    this.desired.set(this.toTarget);
+    this.desired.setV(this.toTarget);
     this.desired.normalize();
     this.desired.mult(this.maxSpeed);
 
-    this.steer.set(this.desired.x - this.entity.vel.x, this.desired.y - this.entity.vel.y);
+    this.steer.setXY(this.desired.x - this.entity.vel.x, this.desired.y - this.entity.vel.y);
 
     if(this.steer.length() > this.maxSteering){
       this.steer.normalize();

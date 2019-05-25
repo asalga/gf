@@ -18,9 +18,11 @@ let pools = {};
 
 export default class Pool {
 
-  static init() {
-    Pool.allocate({ name: 'vec2', type: Vec2, count: 10 });
-    // Pool.allocate({ name: 'bullet', createFunc: UserBullet, count: window.count });
+  static init(cfg) {
+    // cfg.forEach({
+Pool.allocate({ name: 'vec2', type: Vec2, count: 500 });
+    // });
+    
   }
 
   /*
@@ -74,6 +76,7 @@ export default class Pool {
   }
 
   static get(n) {
+    return new Vec2();
     let pool = pools[n];
 
     for (let i = 0; i < pool.length; ++i) {
