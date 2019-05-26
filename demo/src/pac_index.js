@@ -1,30 +1,33 @@
 'use strict';
 
 import Assets from './assets/Assets.js';
-import manifest from './Manifest.js';
+import manifest from './pac_manifest.js';
 
 import Utils from './Utils.js';
 import Debug from './debug/Debug.js';
 import Scene from './Scene.js';
 
-import Event from './event/Event.js';
-import EventSystem from './event/EventSystem.js';
-
 import Renderer from './Renderer.js';
 
 import cfg from './cfg.js';
 import Pool from './core/Pool.js';
+import GameTimer from './core/GameTimer.js';
 
 import EntityFactory from './entity/EntityFactory.js';
 
 let scene = new Scene();
-
+let timer = new GameTimer(1 / 60);
 
 let preloadCallback = function() {
   console.log('Main: preload callback');
 
   Renderer.init();
-  // scene = new Scene();
+  scene = new Scene();
+
+  ['blinky', 'pinky' ].forEach(name => {
+    let sprite = EntityFactory.create(name);
+    scene.add(sprite);
+  });
 
   createCanvas(cfg.gameWidth, cfg.gameHeight);
 };
@@ -36,25 +39,21 @@ window.preload = function() {
 
 window.setup = function() {
   console.log('Main: setup');
+
+  timer.start();
+  timer.update = function(dt) {
+    scene.update(dt);
+    render();
+  };
+
 };
 
-window.draw = function() {
-  if (!Assets.isDone()) { return; }
-
-  update(0.016);
-  render();
-};
 
 window.mousePressed = function() {
   console.log('Main: mousePressed');
 };
 
-function update(dt) {
-  scene.update(dt);
-}
-
 function render() {
   background(100);
-  image(Assets.get('img'), 0, 0);
   Renderer.render(scene);
 }

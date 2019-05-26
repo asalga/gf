@@ -1,5 +1,8 @@
 'use strict';
 
+/*
+
+*/
 export default class GameTimer {
   constructor(deltaTime = 1 / 60) {
     this.deltaTime = deltaTime;
@@ -7,10 +10,10 @@ export default class GameTimer {
     let lastTime = 0;
     let that = this;
 
-    this.tick = function tick(time) {
+    this.tick = function tick(now) {
 
-      // deltaTime = (time - lastTime) / 1000.0;
-      accumTime += (time - lastTime) / 1000.0;
+      // deltaTime = (now - lastTime) / 1000.0;
+      accumTime += (now - lastTime) / 1000.0;
 
       if(accumTime > 1){
         accumTime = deltaTime;
@@ -24,7 +27,7 @@ export default class GameTimer {
       // setTimeout(update, 1000/15);
       // setTimeout(update, 1000 / 1, performance.now());
       requestAnimationFrame(that.tick);
-      lastTime = time;
+      lastTime = now;
     };
   }
 

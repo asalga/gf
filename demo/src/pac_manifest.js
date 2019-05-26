@@ -5,21 +5,21 @@ let dir = '../data';
 export default {
   images: [{
       name: 'img',
-      path: `${dir}/test.png`
+      path: `${dir}/image/test.png`
     },
     {
       name: 'node',
-      path: `${dir}/node.png`
+      path: `${dir}/image/node.png`
     }
   ],
 
   animations: [{
-    name: 'test',
-    path: `${dir}/animations/test.json`
+    name: 'pac_anim',
+    path: `${dir}/animations/pac.json`
   }],
 
   atlases: [{
-    name: 'pac',
+    name: 'pac_atlas',
     imgPath: `${dir}/atlas/pac/pac.png`,
     metaPath: `${dir}/atlas/pac/pac.json`
   }]

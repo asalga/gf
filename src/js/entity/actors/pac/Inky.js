@@ -1,6 +1,6 @@
 'use strict';
 
-import Asset from '../../../assets/Assets.js';
+import Assets from '../../../assets/Assets.js';
 import Entity from '../../Entity.js';
 import SpriteRenderAni from '../../components/SpriteRenderAnimation.js';
 import FollowBehaviour from '../../components/steering/FollowBehaviour.js';
@@ -10,12 +10,9 @@ export default function createInky() {
 
   e.pos.x = 100;
   e.pos.y = 100;
-  
-  let a = new Asset();
 
-  let img = a.get('image', 'node');
-  let anims = a.get('animations', 'test');
-  let atlas = a.get('atlas', 'pac');
+  let anims = Assets.get('pac_anim');
+  let atlas = Assets.get('pac_atlas');
 
   e.updateProxy = function(dt) {};
 
@@ -30,9 +27,8 @@ export default function createInky() {
    
   let followBehaviour = new FollowBehaviour(e, {
     target: 'cursor',
-    // target: scene.findEntity('ball'),
     maxSpeed: 50,
-    maxSteering: random(0.1, 0.5)
+    maxSteering: 2
   });
 
   e.addComponent(spriteRenderAni);

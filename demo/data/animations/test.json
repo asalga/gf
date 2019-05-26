@@ -1,8 +1,0 @@
-{
-    "blinky_left":
-    {
-        "type": "frames",
-        "time": 500,
-        "frames": ["image_part_059", "image_part_060"]
-    }
-}

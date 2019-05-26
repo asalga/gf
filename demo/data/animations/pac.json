@@ -1,0 +1,26 @@
+{
+    "blinky_left":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["blinky_left_0", "blinky_left_1"]
+    },
+    "blinky_right":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["blinky_right_0", "blinky_right_1"]
+    },
+    "pinky_left":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["pinky_left_0", "pinky_left_1"]
+    },
+    "pinky_right":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["pinky_right_0", "pinky_right_1"]
+    }
+}

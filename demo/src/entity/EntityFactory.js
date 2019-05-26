@@ -1,16 +1,24 @@
 'use strict';
 
+// import mario from './actors/pac/Mario.js';
 // import ls from './actors/LetterSelector.js';
 // import background from './actors/decorations/Background.js';
 
 import empty from './actors/Empty.js';
 import ball from './actors/pong/Ball.js';
+
+import blinky from './actors/pac/Blinky.js';
+import pinky from './actors/pac/Pinky.js';
 import inky from './actors/pac/Inky.js';
 
 let createFuncs = new Map([
   ['empty', empty],
   ['ball', ball],
-  ['inky', inky]
+
+  // pac
+  ['blinky', blinky],
+  ['inky', inky],
+  ['pinky', pinky]
 ]);
 
 export default class gfEntityFactory {
