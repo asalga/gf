@@ -55,6 +55,6 @@ function update(dt) {
 
 function render() {
   background(100);
-  image(Assets.get('image', 'img'), 0, 0);
+  image(Assets.get('img'), 0, 0);
   Renderer.render(scene);
 }

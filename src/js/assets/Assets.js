@@ -188,9 +188,24 @@ export default class Assets {
 
 
   /*
-    Should find a better way of deciding which object to peek in.
+    
    */
   static get(...args) {
+
+    if (args.length === 1) {
+      let assetName = args[0];
+
+      let assetKeys = Object.keys(assetTypes);
+
+      for (let i = 0; i < assetKeys.length; i++) {
+        let type = assetKeys[i];
+        
+        if (assetTypes[type][assetName]) {
+          return assetTypes[type][assetName];
+        }
+      }
+      console.error('Did not find asset:', assetName);
+    }
 
     if (args.length === 2) {
       let type = args[0];
