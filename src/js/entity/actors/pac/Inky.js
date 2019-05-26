@@ -29,8 +29,8 @@ export default function createInky() {
   });
    
   let followBehaviour = new FollowBehaviour(e, {
-    // target: 'cursor'
-    target: scene.findEntity('ball'),
+    target: 'cursor',
+    // target: scene.findEntity('ball'),
     maxSpeed: 50,
     maxSteering: random(0.1, 0.5)
   });

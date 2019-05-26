@@ -20,13 +20,12 @@ import EntityFactory from './entity/EntityFactory.js';
 let assets;
 let scene;
 
-
 let preloadCallback = function() {
   console.log('preload callback');
 
-  Pool.init([{
-    // Pool.allocate({ name: 'vec2', type: Vec2, count: 500 });
-  }]);
+  Pool.init([
+    // { name: 'vec2', type: Vec2, count: 100 }
+  ]);
   Debug.init({ toggleKey: 'Escape' });
   Renderer.init();
 
@@ -34,16 +33,17 @@ let preloadCallback = function() {
   scene.restartGame();
   window.scene = scene;
 
-  createCanvas(400, 400);
+
+  createCanvas(windowWidth, windowHeight);
 
   scene.add(EntityFactory.create('ball'));
 
   for (let i = 0; i < 1000; i++) {
-    let x = random(-200, 200);
-    let y = random(-200, 200);
+    let x = random(-2100, 2100);
+    let y = random(-2100, 2100);
 
     let e = EntityFactory.create('inky');
-    e.pos.set(x,y);
+    e.pos.set(x, y);
 
     scene.add(e);
   }

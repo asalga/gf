@@ -5,48 +5,78 @@
 
 import Atlas from './Atlas.js';
 
-let instance;
+let cbCalled = false;
+let cb = function() {};
 
-export default function Assets(manifest) {
+let assetTypes = {
+  'image': {},
+  'atlas': {},
+  'animations': {},
+  'audio': {},
+  'json': {},
+  'shaders': {}
+};
 
-  if (instance) {
-    return instance;
-  }
+let numAssetsLoaded = 0;
+let totalAssetsToLoad = 0;
 
-  instance = this;
-  this.cbCalled = false;
-  this.cb = function() {};
+/*
 
-  this.assetTypes = {
-    'image': {},
-    'atlas': {},
-    'animations': {},
-    'audio': {},
-    'json': {},
-    'shaders': {}
-  };
+*/
+export default class Assets {
 
-  this.numAssetsLoaded = 0;
-  this.totalAssetsToLoad = 0;
+  static load(manifest, loadingDone) {
 
-  // Count how many we need to load so we can compare as we load the assets
-  let assetsToLoad = Object.values(manifest);
-  assetsToLoad.forEach(assetType => {
-    this.totalAssetsToLoad += assetType.length;
-  });
+    cb = loadingDone;
 
-  /*
-   */
-  this.preload = function(cb) {
-    this.cb = cb;
-
-    if (this.checkIfDone()) {
-      return;
-    }
-
-    let that = this;
+    // Count how many we need to load so we can compare as we load the assets
+    let assetsToLoad = Object.values(manifest);
+    assetsToLoad.forEach(assetType => {
+      totalAssetsToLoad += assetType.length;
+    });
 
     //
+    // ** IMAGES **
+    //
+    if (manifest.images) {
+      manifest.images.forEach(v => {
+        loadImage(v.path, p5img => {
+          // that.images[v] = p5img;
+          numAssetsLoaded++;
+          assetTypes['image'][v.name] = p5img;
+
+          Assets.isDone();
+          console.log('Asset: loaded image:', v.name);
+        });
+      });
+    }
+
+    //
+    // ** ANIMATION
+    //
+    if (manifest.animations) {
+      manifest.animations.forEach(j => {
+        let n = j.name;
+
+        fetch(j.path)
+          .then(function(response) {
+            return response.json().then(data => {
+              return {
+                n: j.name,
+                animations: data
+              }
+            });
+          })
+          .then(function(data) {
+            numAssetsLoaded++;
+            assetTypes['animations'][data.n] = data.animations;
+
+            Assets.isDone();
+            console.log('Asset: loaded animation:', j.name);
+          });
+      });
+    }
+
     //
     // ** ATLASES
     //
@@ -63,11 +93,11 @@ export default function Assets(manifest) {
               meta: xhr.responseText
             });
 
-            that.assetTypes['atlas'][a.name] = atlas;
-            that.numAssetsLoaded++;
+            assetTypes['atlas'][a.name] = atlas;
+            numAssetsLoaded++;
 
-            that.checkIfDone();
-            console.log('Asset: loaded atlas: ', a.name);
+            Assets.isDone();
+            console.log('Asset: loaded atlas:', a.name);
           };
           xhr.open('GET', a.metaPath);
           xhr.send();
@@ -76,26 +106,31 @@ export default function Assets(manifest) {
     }
 
     //
+    // ** GENERIC GAME SPECIFIC JSON
     //
-    // ** AUDIO
-    //
-    // manifest.audio.forEach(v => {
+    if (manifest.json) {
+      manifest.json.forEach(j => {
+        let n = j.name;
 
-    //   let h = new Howl({
-    //     src: v.path,
-    //     volume: 1,
-    //     loop: false,
-    //     autoplay: false,
-    //     onload: v => {
-    //       that.numAssetsLoaded++;
-    //     }
-    //   });
+        fetch(j.path)
+          .then(function(response) {
+            return response.json().then(data => {
+              return {
+                n: j.name,
+                json: data
+              }
+            });
+          })
+          .then(function(data) {
+            numAssetsLoaded++;
+            assetTypes['json'][data.n] = data.json;
 
-    //   // that.audio[v.path] = h;
-    //   that.assetTypes['audio'][v.name] = h;
-    // });
+            Assets.isDone();
+            console.log('Asset: loaded json:', j.name);
+          });
+      });
+    }
 
-    //
     //
     // ** SHADERS
     //
@@ -119,110 +154,60 @@ export default function Assets(manifest) {
 
         Promise.all([v, f]).then(function(shaders) {
           let n = shaders[0].name;
-          that.assetTypes['shaders'][n] = {
+          assetTypes['shaders'][n] = {
             vert: shaders[0].src,
             frag: shaders[1].src
           };
 
-          that.checkIfDone();
-          console.log('Asset: loaded shader: ', n);
-          that.numAssetsLoaded++;
-        });
-
-      });
-    }
-
-    //
-    //
-    // ** GENERIC GAME SPECIFIC JSON
-    //
-    if (manifest.json) {
-      manifest.json.forEach(j => {
-        let n = j.name;
-
-        fetch(j.path)
-          .then(function(response) {
-            return response.json().then(data => {
-              return {
-                n: j.name,
-                json: data
-              }
-            });
-          })
-          .then(function(data) {
-            that.numAssetsLoaded++;
-            that.assetTypes['json'][data.n] = data.json;
-
-            that.checkIfDone();
-            console.log('Asset: loaded json: ', j.name);
-          });
-      });
-    }
-
-    //
-    // ** ANIMATION
-    //
-    if (manifest.animations) {
-      manifest.animations.forEach(j => {
-        let n = j.name;
-
-        fetch(j.path)
-          .then(function(response) {
-            return response.json().then(data => {
-              return {
-                n: j.name,
-                animations: data
-              }
-            });
-          })
-          .then(function(data) {
-            that.numAssetsLoaded++;
-            that.assetTypes['animations'][data.n] = data.animations;
-
-            that.checkIfDone();
-            console.log('Asset: loaded animation: ', j.name);
-          });
-      });
-    }
-
-    // ** IMAGES **
-    if (manifest.images) {
-      manifest.images.forEach(v => {
-        loadImage(v.path, p5img => {
-          // that.images[v] = p5img;
-          that.numAssetsLoaded++;
-          that.assetTypes['image'][v.name] = p5img;
-
-          that.checkIfDone();
-          console.log('Asset: loaded image: ', v.name);
+          Assets.isDone();
+          console.log('Asset: loaded shader:', n);
+          numAssetsLoaded++;
         });
       });
     }
 
-  };
+    //
+    // ** AUDIO
+    //
+    // manifest.audio.forEach(v => {
 
-  /*
-  */
-  this.checkIfDone = function() {
+    //   let h = new Howl({
+    //     src: v.path,
+    //     volume: 1,
+    //     loop: false,
+    //     autoplay: false,
+    //     onload: v => {
+    //       that.numAssetsLoaded++;
+    //     }
+    //   });
 
-    if (this.numAssetsLoaded === this.totalAssetsToLoad && this.cbCalled === false) {
-      this.cbCalled = true;
-      this.cb();
-    }
+    //   // that.audio[v.path] = h;
+    //   that.assetTypes['audio'][v.name] = h;
+    // });
+  }
 
-    return this.numAssetsLoaded === this.totalAssetsToLoad;
-  };
 
   /*
     Should find a better way of deciding which object to peek in.
    */
-  this.get = function(...args) {
+  static get(...args) {
 
     if (args.length === 2) {
       let type = args[0];
-      let k = args[1];
-      return this.assetTypes[type][k];
+      let key = args[1];
+      return assetTypes[type][key];
     }
   };
 
-};
+  /*
+   */
+  static isDone() {
+
+    if (numAssetsLoaded === totalAssetsToLoad && cbCalled === false) {
+      cbCalled = true;
+      cb();
+    }
+
+    return numAssetsLoaded === totalAssetsToLoad;
+  };
+}
