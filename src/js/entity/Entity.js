@@ -29,7 +29,6 @@ export default class Entity {
     When we reset an object, we'll also need to generate a new ID
   */
   reset() {
-    // console.log('Entity Reset');
 
     let defaults = {
       opacity: 1,
@@ -44,6 +43,7 @@ export default class Entity {
     this.pos = Pool.get('vec2');
     this.vel = Pool.get('vec2');
     this.acc = Pool.get('vec2');
+    this.distance = Pool.get('vec2');
     this.worldCoords = Pool.get('vec2');
 
     this.id = Utils.getId();
@@ -52,6 +52,7 @@ export default class Entity {
       ch.reset();
       ch.resetProxy && ch.resetProxy();
     });
+
     this.components.forEach(c => {
       c.reset();
       c.resetProxy && c.resetProxy()
@@ -97,7 +98,7 @@ export default class Entity {
 
 
     let c;
-    for(let i = 0; i < this.components.length; i++){
+    for (let i = 0; i < this.components.length; i++) {
       c = this.components[i];
       c.update && c.update(dt, this);
       c.updateProxy && c.updateProxy(dt);
@@ -110,21 +111,19 @@ export default class Entity {
     //   c.updateProxy && c.updateProxy(dt);
     // });
 
-    //
+    // 
     if (this.vel) {
-      // _temp.set(this.vel);
-      // _temp.mult(dt * this.timeScale);
-      // this.pos.add(_temp);
       this.pos.x += this.vel.x * dt * this.timeScale;
       this.pos.y += this.vel.y * dt * this.timeScale;
+
+      // Currently, this is only for animation
+      this.distance.x += Math.abs(this.vel.x) * dt;
+      this.distance.y += Math.abs(this.vel.y) * dt;
     }
 
-    for(let i = 0; i < this.children.length; i++){
+    for (let i = 0, len = this.children.length; i < len; i++) {
       this.children[i].update(dt);
     }
-    // this.children.forEach(c => {
-      // c.update(dt);
-    // });
   }
 
   /*
@@ -151,6 +150,7 @@ export default class Entity {
     Pool.free(this.pos);
     Pool.free(this.vel);
     Pool.free(this.acc);
+    Pool.free(this.distance);
     Pool.free(this.worldCoords);
   }
 
@@ -211,7 +211,7 @@ export default class Entity {
 
   addComponent(c) {
     if (this[c.name]) {
-      console.log(`Warning: ${this.name} already has ${c.name}`);
+      console.warn(`Warning: ${this.name} already has ${c.name}`);
     }
     this.components.push(c);
     this[c.name] = c;

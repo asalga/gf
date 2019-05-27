@@ -14,6 +14,7 @@ import Utils from '../../Utils.js';
     loop {Boolean}
     pingpong {Boolean}
     currAnimation {String}
+    autoplay {Boolean}
 */
 export default class SpriteRenderAnimation extends Component {
   constructor(e, cfg) {
@@ -31,33 +32,31 @@ export default class SpriteRenderAnimation extends Component {
 
     this.dirty = true;
 
-    //???
-    this.sprite = this.cfg.cvs;
-
     this.frame = 0;
     this.idx = 0;
   }
 
-  play(n){
+  play(n) {
     this.currAnimation = n;
+  }
+
+  routeFrame() {
+
   }
 
   draw(p) {
     let frames = this.animations[this.currAnimation].frames;
-
-    this.idx = (millis()*4 % 1000) < 500 ? 0 : 1;
+    this.idx = (millis() * 4 % 1000) < 500 ? 0 : 1;
 
     let imgName = frames[this.idx];
     let img = this.atlas.get(imgName);
 
     p.image(img, this.entity.pos.x, this.entity.pos.y);
-    
+
     this.drawProxy && this.drawProxy();
   }
 
-  update(dt) {
-    // debugger;
-  }
+  update(dt) {}
 
 }
 
