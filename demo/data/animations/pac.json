@@ -22,5 +22,29 @@
         "type": "frames",
         "time": 500,
         "frames": ["pinky_right_0", "pinky_right_1"]
+    },
+    "inky_left":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["inky_left_0", "inky_left_1"]
+    },
+    "inky_right":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["inky_right_0", "inky_right_1"]
+    },
+    "clyde_left":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["clyde_left_0", "clyde_left_1"]
+    },
+    "clyde_right":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["clyde_right_0", "clyde_right_1"]
     }
 }

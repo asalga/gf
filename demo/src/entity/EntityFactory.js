@@ -10,6 +10,7 @@ import ball from './actors/pong/Ball.js';
 import blinky from './actors/pac/Blinky.js';
 import pinky from './actors/pac/Pinky.js';
 import inky from './actors/pac/Inky.js';
+import clyde from './actors/pac/Clyde.js';
 
 let createFuncs = new Map([
   ['empty', empty],
@@ -18,7 +19,8 @@ let createFuncs = new Map([
   // pac
   ['blinky', blinky],
   ['inky', inky],
-  ['pinky', pinky]
+  ['pinky', pinky],
+  ['clyde', clyde]
 ]);
 
 export default class gfEntityFactory {

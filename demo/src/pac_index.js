@@ -22,9 +22,12 @@ let preloadCallback = function() {
   console.log('Main: preload callback');
 
   Renderer.init();
-  scene = new Scene();
+  window.scene = new Scene();
 
-  ['blinky', 'pinky' ].forEach(name => {
+  let arr = ['blinky', 'pinky', 'inky', 'clyde'];
+  // arr = Utils.repeat(arr, 5)
+
+  arr.forEach(name => {
     let sprite = EntityFactory.create(name);
     scene.add(sprite);
   });
@@ -45,7 +48,6 @@ window.setup = function() {
     scene.update(dt);
     render();
   };
-
 };
 
 
@@ -54,6 +56,6 @@ window.mousePressed = function() {
 };
 
 function render() {
-  background(100);
+  background(0);
   Renderer.render(scene);
 }

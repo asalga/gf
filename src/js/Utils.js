@@ -6,6 +6,7 @@ export default class Utils {
   static getEl(selector) {
     return document.getElementById(selector);
   }
+
   static noop() {}
 
   static getId() {
@@ -14,6 +15,15 @@ export default class Utils {
 
   static get undef() {
     return undefined;
+  }
+
+  static repeat(arr, count){
+    let arrCopy = arr.slice(0);
+
+    for(let i = 0; i < count; ++i){
+      arr = arr.concat(arrCopy);
+    }
+    return arr;
   }
 
   /*

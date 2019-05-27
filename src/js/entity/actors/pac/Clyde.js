@@ -22,7 +22,8 @@ export default function createClyde() {
     animations: anims,
     animationTime: 1,
     loop: true,
-    pingpong: false
+    pingpong: false,
+    currAnimation: 'clyde_left'
   });
    
   let followBehaviour = new FollowBehaviour(e, {

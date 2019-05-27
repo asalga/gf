@@ -1,11 +1,9 @@
 'use strict';
 
 export default class Vec2 {
-  constructor() {
-    window.vec2Ctor++;
 
+  constructor() {
     let x, y;
-    let arr = new Array(100);
 
     if (arguments.length === 0) {
       x = y = 0;
@@ -37,7 +35,7 @@ export default class Vec2 {
     return this;
   }
 
-  setXY(x,y){
+  setXY(x, y) {
     this.x = x;
     this.y = y;
     return this;
@@ -56,16 +54,6 @@ export default class Vec2 {
       this.y = arguments[1];
       return this;
     }
-
-    // switch (arguments.length) {
-    //   case 1:
-
-    //     break;
-    //   case 2:
-    //     this.x = arguments[0];
-    //     this.y = arguments[1];
-    // }
-    // return this;
   }
 
   add(v) {
@@ -157,6 +145,15 @@ export default class Vec2 {
 
   static sub(v1, v2) {
     return new Vec2(v1.x - v2.x, v1.y - v2.y);
+  }
+
+  /*
+    Assign v a random normalized direction
+  */
+  static randomDir(v) {
+    v.x = Math.random() * 2 - 1;
+    v.y = Math.random() * 2 - 1;
+    v.normalize();
   }
 
   static rand() {

@@ -18,6 +18,9 @@ export default class Scene {
     this.user = null;
     this.restartGameCallback = function() {};
 
+    this.gameWidth = cfg.gameWidth;
+    this.gameHeight = cfg.gameHeight;
+
     this.entitiesAddedOrRemovedDirty = false;
     this.deleteQueue = [];
     this.eventsToFireNextFrame = [];
