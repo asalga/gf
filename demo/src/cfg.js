@@ -3,8 +3,8 @@
 export default {
   debug: true,
 
-  gameWidth: 640,
-  gameHeight: 480,
+  gameWidth: 1024,
+  gameHeight: 768,
 
   layers: [
   ]

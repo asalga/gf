@@ -63,6 +63,11 @@ export default class Utils {
     }
   }
 
+  static distance(p1, p2, d){
+    let res = Vec2.sub(p1,p2);
+    d = res.mag();
+  }
+
   // playing around with perf testing
   // .length = [] vs allocating new array
   static clearArray(arr) {

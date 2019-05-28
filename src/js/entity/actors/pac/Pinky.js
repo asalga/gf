@@ -33,12 +33,17 @@ export default function createPinky() {
     currAnimation: 'pinky_left'
   });
 
+  let separateBehaviour = new SeparateBehaviour(e, {
+    minDistance: 32
+  });
+  
   let stayInBounds = new StayInBounds(e, {
     steerMag: 2,
     maxSpeed: 100,
     bounds: { x: 32, y: 32, w: scene.gameWidth - 64, h: scene.gameHeight - 64 }
   });
 
+  e.addComponent(separateBehaviour);
   e.addComponent(spriteRenderAni);
   e.addComponent(stayInBounds);
 

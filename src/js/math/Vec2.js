@@ -120,6 +120,12 @@ export default class Vec2 {
     return this;
   }
 
+  div(s){
+    this.x /= s;
+    this.y /= s;
+    return this;
+  }
+
   static create() {
     return new Vec2();
   }
@@ -143,8 +149,10 @@ export default class Vec2 {
     v1.y -= v2.y;
   }
 
-  static sub(v1, v2) {
-    return new Vec2(v1.x - v2.x, v1.y - v2.y);
+  static sub(res, v1, v2) {
+    res.x = v1.x - v2.x;
+    res.y = v1.y - v2.y;
+    // return new Vec2(v1.x - v2.x, v1.y - v2.y);
   }
 
   /*

@@ -20,7 +20,9 @@ export default class SpriteAniDynamic extends Component {
     this.cfg = cfg;
     this.reset();
 
-    this._frames;
+    this._frames = null;
+    this._mag = null;
+    this._img = null;
   }
 
   reset() {
@@ -40,15 +42,15 @@ export default class SpriteAniDynamic extends Component {
     s - scalar value
   */
   routeFrame(s) {
-    console.log(this.entity.distance)
     this._frames = this.animations[this.currAnimation].frames;
     this.idx = Math.floor(s/10 % this._frames.length)
     return this.atlas.get(this._frames[this.idx]);
   }
 
   draw(p) {
-    let img = this.routeFrame(this.entity.distance.x);
-    p.image(img, this.entity.pos.x, this.entity.pos.y);
+    this._mag = this.entity.distance.mag();
+    this._img = this.routeFrame(this._mag);
+    p.image(this._img, this.entity.pos.x, this.entity.pos.y);
     this.drawProxy && this.drawProxy();
   }
 

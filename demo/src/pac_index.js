@@ -15,17 +15,19 @@ import GameTimer from './core/GameTimer.js';
 
 import EntityFactory from './entity/EntityFactory.js';
 
-let scene = new Scene();
+window.maxSteer = 1;
+window.maxTest = 100;
+
 let timer = new GameTimer(1 / 60);
 
 let preloadCallback = function() {
   console.log('Main: preload callback');
 
   Renderer.init();
-  window.scene = new Scene();
 
-  let arr = ['blinky', 'pinky', 'inky', 'clyde'];
-  // arr = Utils.repeat(arr, 5)
+  // let arr = ['blinky', 'pinky', 'clyde', 'clyde'];
+  let arr = ['blinky', 'clyde'];
+  arr = Utils.repeat(arr, 50)
 
   arr.forEach(name => {
     let sprite = EntityFactory.create(name);
@@ -43,9 +45,11 @@ window.preload = function() {
 window.setup = function() {
   console.log('Main: setup');
 
+  window.scene = new Scene();
+
   timer.start();
   timer.update = function(dt) {
-    scene.update(dt);
+    window.scene.update(dt);
     render();
   };
 };
@@ -56,6 +60,9 @@ window.mousePressed = function() {
 };
 
 function render() {
+  // push();
   background(0);
-  Renderer.render(scene);
+  // scale(0.5, 0.5);
+  Renderer.render(window.scene);
+  // pop();
 }

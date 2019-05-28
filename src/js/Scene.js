@@ -102,6 +102,13 @@ export default class Scene {
     // this.add(EntityFactory.create('ui'));
   }
 
+  /*
+    Implement me
+  */
+  entityIterator(){
+    debugger;
+  }
+
   remove(e) {
     Assert(e);
 
@@ -116,7 +123,8 @@ export default class Scene {
     // this.entitiesAddedOrRemovedDirty = true;
   }
 
-  getUser() {
-    return this.user;
-  }
+  // nope, this is too specific!
+  // getUser() {
+  //   return this.user;
+  // }
 }

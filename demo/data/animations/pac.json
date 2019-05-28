@@ -46,5 +46,17 @@
         "type": "frames",
         "time": 500,
         "frames": ["clyde_right_0", "clyde_right_1"]
+    },
+    "clyde_down":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["clyde_down_0", "clyde_down_1"]
+    },
+    "clyde_up":
+    {
+        "type": "frames",
+        "time": 500,
+        "frames": ["clyde_up_0", "clyde_up_1"]
     }
 }
