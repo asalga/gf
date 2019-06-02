@@ -11,8 +11,8 @@ import SeparateBehaviour from '../../components/steering/SeparateBehaviour.js';
 export default function createclyde() {
   let e = new Entity({ name: 'clyde' });
 
-  e.pos.x = random(1110, 1200);
-  e.pos.y = random(1100, 1200);
+  e.pos.x = random(610, 800);
+  e.pos.y = random(610, 800);
 
   let anims = Assets.get('pac_anim');
   let atlas = Assets.get('pac_atlas');
@@ -47,11 +47,11 @@ export default function createclyde() {
   let followBehaviour = new FollowBehaviour(e, {
     target: 'cursor',
     maxSpeed: 200,
-    maxSteering: 1
+    maxSteering: 4
   });
 
   let separateBehaviour = new SeparateBehaviour(e, {
-    minDistance: 40
+    minDistance: 32
   });
 
   let stayInBoundsBehaviour = new StayInBoundsBehaviour(e, {

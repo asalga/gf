@@ -15,8 +15,9 @@ import GameTimer from './core/GameTimer.js';
 
 import EntityFactory from './entity/EntityFactory.js';
 
-window.maxSteer = 1;
-window.maxTest = 100;
+window.maxSteer = 60;
+window.maxTest = 8;
+window.minDist = 10;
 
 let timer = new GameTimer(1 / 60);
 
@@ -26,8 +27,9 @@ let preloadCallback = function() {
   Renderer.init();
 
   // let arr = ['blinky', 'pinky', 'clyde', 'clyde'];
-  let arr = ['blinky', 'clyde'];
-  arr = Utils.repeat(arr, 50)
+  // let arr = ['blinky', 'clyde', 'pinky'];
+  let arr = ['blinky'];
+  arr = Utils.repeat(arr, 25)
 
   arr.forEach(name => {
     let sprite = EntityFactory.create(name);

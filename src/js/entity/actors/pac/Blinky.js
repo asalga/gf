@@ -12,8 +12,9 @@ import SeparateBehaviour from '../../components/steering/SeparateBehaviour.js';
 export default function createBlinky() {
   let e = new Entity({ name: 'blinky' });
 
-  e.pos.x = random(-100, -200);
-  e.pos.y = random(-100, -200);
+  // e.pos.x = random(-20, 600);
+  // e.pos.y = random(-50, 600);
+  [e.pos.x, e.pos.y] = [random(200,300), 200];
 
 
   let anims = Assets.get('pac_anim');
@@ -63,19 +64,20 @@ export default function createBlinky() {
 
   let stayInBoundsBehaviour = new StayInBoundsBehaviour(e, {
     steerMag: 10,
-    maxSpeed: 150,
-    bounds: { x: 32, y: 32, w: scene.gameWidth - 64, h: scene.gameHeight - 64 }
+    maxSpeed: 400,
+    bounds: { x: 100, y: 100, w:300, h:300 }
+    // bounds: { x: 32, y: 32, w: scene.gameWidth - 64, h: scene.gameHeight - 64 }
   });
 
   let separateBehaviour = new SeparateBehaviour(e, {
-    minDistance: 40
+    minDistance: 600
   });
 
-  e.addComponent(separateBehaviour);
+  // e.addComponent(separateBehaviour);
   e.addComponent(stayInBoundsBehaviour);
   // e.addComponent(spriteAniDynamic);
   e.addComponent(spriteRenderAni);
-  e.addComponent(followBehaviour);
+  // e.addComponent(followBehaviour);
   
   // e.addComponent(spriteRenderAni);
 

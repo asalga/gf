@@ -77,7 +77,7 @@ export default class SeparateBehaviour extends Component {
           count++;
           this._temp.normalize();
           this._temp.div(m);
-          this.res.add(this._temp);
+          this.res.add(this._temp.x, this._temp.y);
         }
       }
     });
