@@ -5,7 +5,7 @@ let numSegments = 60;
 let segmentResolution = 1000;
 let segmentLength;
 let segmentSpacing;
-let heightScale = 230;
+let heightScale = 20;
 
 let speed = 5.5;
 
@@ -31,9 +31,8 @@ class Segment {
     let xSpacing = this.len / segmentResolution;
 
     this.pos.y += dt * speed;
-    // this.pos.y = this.pos.y % (img.height / segmentSpacing);
     if (this.pos.y > img.height / segmentSpacing) {
-      // this.pos.y -= img.height / segmentSpacing;
+      this.pos.y -= img.height / segmentSpacing;
     }
 
     for (let i = 0; i < this.vertices.length; i += 2) {
@@ -41,12 +40,9 @@ class Segment {
       let x = (i / 2) * xSpacing;
       let y = this.pos.y * segmentSpacing;
 
-      if(dt === 0){
+      if (dt === 0) {
         y -= 1500;
       }
-      //   let porabolaInfluence = sin((i / this.vertices.length) * PI)  * porabolaInfluenceScale;
-      //   let n = this.nLookup[i / 2];
-      //   n *= -porabolaInfluence / 20;
 
       let col = img.get(x, y);
       let intensity = col[0] / 255;
@@ -54,15 +50,6 @@ class Segment {
       this.vertices[i + 0] = x;
       this.vertices[i + 1] = y - (intensity) * heightScale;
     }
-
-    // if (this.t > 50) {
-    //   this.t = 0;
-    //   shiftArrayElements(this.nLookup);
-
-    //   let n = getNoise(this.nextNoise / 50, this.pos.y);
-    //   this.nLookup[this.nLookup.length - 1] = n;
-    //   this.nextNoise++;
-    // }
   }
 
   draw() {
@@ -80,7 +67,7 @@ class Segment {
 }
 
 window.preload = function() {
-  loadImage('data/image/face.png', function(_img) {
+  loadImage('data/image/skull.png', function(_img) {
     img = _img;
     img.loadPixels();
     loaded = true;
