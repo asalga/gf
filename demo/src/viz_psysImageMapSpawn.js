@@ -6,8 +6,8 @@ let imageMap;
 let listed = false;
 let p;
 let WW, WH;
-let particlesPerFrame = 15;
-let imgScale = 6;
+let particlesPerFrame = 70;
+let imgScale = 16;
 let particles;
 
 class Particles {
@@ -22,6 +22,7 @@ class Particles {
     this.lifetime = new Float32Array(this.count);
 
     this.pos = new Float32Array(this.count * 2);
+    this.worldPos = new Float32Array(this.count * 2);
     this.vel = new Float32Array(this.count * 2);
     this.acc = new Float32Array(this.count * 2);
 
@@ -52,7 +53,6 @@ class Particles {
   spawnParticle() {
     let idx = this.findDeadParticle();
 
-    // debugger;
     if (idx > -1) {
       this._p = createVector();
       let c = [0, 0, 0, 0];
@@ -63,18 +63,21 @@ class Particles {
       this.col[idx * 4 + 2] = c[2];
       this.col[idx * 4 + 3] = c[3];
 
+      this.worldPos[idx * 2 + 0] = mouseX;
+      this.worldPos[idx * 2 + 1] = mouseY;
 
-      this.pos[idx * 2 + 0] = this._p.x;
-      this.pos[idx * 2 + 1] = this._p.y;
+      this.pos[idx * 2 + 0] = this._p.x + this.worldPos[idx * 2 + 0] / imgScale;
+      this.pos[idx * 2 + 1] = this._p.y + this.worldPos[idx * 2 + 1] / imgScale;
+
+      this.pos[idx * 2 + 0] += random(0, imgScale/6);
+      this.pos[idx * 2 + 1] += random(0, imgScale/6);
 
       this.age[idx] = 0;
       this.alive[idx] = 1;
-      this.lifetime[idx] = random(0.1, 0.2);
+      this.lifetime[idx] = random(0.01, 0.7);
 
-      this.vel[idx * 2 + 0] = 0;
-      this.vel[idx * 2 + 1] = random(-1, -3);
-
-
+      this.vel[idx * 2 + 0] = -1;
+      // this.vel[idx * 2 + 1] = random(-5, -8);
 
       return true;
     }
@@ -99,6 +102,11 @@ class Particles {
 
     this.pos[i * 2 + 0] += this.vel[i * 2 + 0] * dt;
     this.pos[i * 2 + 1] += this.vel[i * 2 + 1] * dt;
+
+    let a = this.age[i];
+    let l = this.lifetime[i];
+
+    this.col[i * 4 + 3] = (a/l)*255 /2;// * dt * 1000;
 
     // this.vel[i + 0] += this.acc[0];
     // this.vel[i + 1] += this.acc[1];
@@ -129,8 +137,9 @@ class Particles {
       this.col[i * 4 + 1],
       this.col[i * 4 + 2],
       this.col[i * 4 + 3]);
-    
-    ellipse(x,y, imgScale, imgScale);
+
+    ellipse(x, y, 10, 10);
+    // imgScale, imgScale);
     // rect(x, y, imgScale, imgScale);
   }
 
@@ -179,16 +188,15 @@ class ImageMap {
     p.x = idx % this.img.width;
     p.y = floor(idx / this.img.width);
 
-
-    c[0] = random(0, 255);
-    c[1] = random(0, 255);
-    c[2] = 0;
-    c[3] = 255;
+    c[0] = this.img.pixels[idx * 4 + 0];
+    c[1] = this.img.pixels[idx * 4 + 1];
+    c[2] = this.img.pixels[idx * 4 + 2];
+    c[3] = this.img.pixels[idx * 4 + 3];
   }
 }
 
 window.preload = function() {
-  img = loadImage('data/image/lemming.png', function(_img) {
+  img = loadImage('data/image/walk2.png', function(_img) {
     _img.loadPixels();
 
     imageMap = new ImageMap();
@@ -223,5 +231,6 @@ window.draw = function() {
   // scale(6);
   // image(img, 0, 0);
   // pop();
+
   particles.draw();
 }
