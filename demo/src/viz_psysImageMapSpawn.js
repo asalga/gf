@@ -6,8 +6,8 @@ let imageMap;
 let listed = false;
 let p;
 let WW, WH;
-let particlesPerFrame = 70;
-let imgScale = 16;
+let particlesPerFrame = 80;
+let imgScale = 8;
 let particles;
 
 class Particles {
@@ -20,6 +20,7 @@ class Particles {
     this.alive = new Uint8Array(this.count);
     this.age = new Float32Array(this.count);
     this.lifetime = new Float32Array(this.count);
+    this.size = new Uint8Array(this.count);
 
     this.pos = new Float32Array(this.count * 2);
     this.worldPos = new Float32Array(this.count * 2);
@@ -69,14 +70,16 @@ class Particles {
       this.pos[idx * 2 + 0] = this._p.x + this.worldPos[idx * 2 + 0] / imgScale;
       this.pos[idx * 2 + 1] = this._p.y + this.worldPos[idx * 2 + 1] / imgScale;
 
-      this.pos[idx * 2 + 0] += random(0, imgScale/6);
-      this.pos[idx * 2 + 1] += random(0, imgScale/6);
+      this.pos[idx * 2 + 0] += random(0, imgScale / 6);
+      this.pos[idx * 2 + 1] += random(0, imgScale / 6);
 
       this.age[idx] = 0;
       this.alive[idx] = 1;
-      this.lifetime[idx] = random(0.01, 0.7);
+      this.lifetime[idx] = random(0.08, .45);
 
-      this.vel[idx * 2 + 0] = -1;
+      this.size[idx] = random(10, 20);
+
+      // this.vel[idx * 2 + 1] = -15;
       // this.vel[idx * 2 + 1] = random(-5, -8);
 
       return true;
@@ -106,9 +109,10 @@ class Particles {
     let a = this.age[i];
     let l = this.lifetime[i];
 
-    this.col[i * 4 + 3] = (a/l)*255 /2;// * dt * 1000;
+    this.col[i * 4 + 3] = (a / l) * 255;
+    this.size[i] = 17 - (a / l * 17);
 
-    // this.vel[i + 0] += this.acc[0];
+    this.vel[i + 0] += this.acc[0];
     // this.vel[i + 1] += this.acc[1];
   }
 
@@ -138,9 +142,9 @@ class Particles {
       this.col[i * 4 + 2],
       this.col[i * 4 + 3]);
 
-    ellipse(x, y, 10, 10);
+    // ellipse(x, y, this.size[i], this.size[i]);
+    rect(x, y, this.size[i], this.size[i]);
     // imgScale, imgScale);
-    // rect(x, y, imgScale, imgScale);
   }
 
   draw() {
@@ -154,6 +158,7 @@ class Particles {
 }
 
 class ImageMap {
+	
   constructor() {
     this.scale = 1;
     this.indices = [];
@@ -209,7 +214,6 @@ window.preload = function() {
 
 window.setup = function() {
   createCanvas(windowWidth, windowHeight);
-
   noSmooth();
 
   [WW, WH] = [windowWidth, windowHeight];
