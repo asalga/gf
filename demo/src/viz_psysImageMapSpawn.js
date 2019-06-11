@@ -6,13 +6,28 @@ let imageMap;
 let listed = false;
 let p;
 let WW, WH;
-let particlesPerFrame = 80;
-let imgScale = 8;
+
+let imgScale = 4;
+
 let particles;
+let psys2;
 
 class Particles {
   constructor(cfg) {
     this.timer = 0;
+
+    this.rate = cfg.rate || 10;
+    this.szSpeed = cfg.szSpeed;
+    this.fn = cfg.fn || function() {};
+    this.lifeTimeRange = cfg.lifeTimeRange;
+
+    if (cfg.sz) {
+      this.sizeRange = [cfg.sz[0], cfg.sz[1]];
+    }
+
+    if (cfg.vel) {
+      this.velRange = [cfg.vel[0], cfg.vel[1]];
+    }
 
     this.count = cfg.count;
     this._p = createVector();
@@ -21,6 +36,7 @@ class Particles {
     this.age = new Float32Array(this.count);
     this.lifetime = new Float32Array(this.count);
     this.size = new Uint8Array(this.count);
+    this.sizeOri = new Uint8Array(this.count);
 
     this.pos = new Float32Array(this.count * 2);
     this.worldPos = new Float32Array(this.count * 2);
@@ -64,8 +80,8 @@ class Particles {
       this.col[idx * 4 + 2] = c[2];
       this.col[idx * 4 + 3] = c[3];
 
-      this.worldPos[idx * 2 + 0] = mouseX;
-      this.worldPos[idx * 2 + 1] = mouseY;
+      this.worldPos[idx * 2 + 0] = 0;//mouseX;
+      this.worldPos[idx * 2 + 1] = 0;//mouseY;
 
       this.pos[idx * 2 + 0] = this._p.x + this.worldPos[idx * 2 + 0] / imgScale;
       this.pos[idx * 2 + 1] = this._p.y + this.worldPos[idx * 2 + 1] / imgScale;
@@ -75,9 +91,17 @@ class Particles {
 
       this.age[idx] = 0;
       this.alive[idx] = 1;
-      this.lifetime[idx] = random(0.08, .45);
+      this.lifetime[idx] = random(this.lifeTimeRange[0], this.lifeTimeRange[1]);
 
-      this.size[idx] = random(10, 20);
+
+      if (this.sizeRange) {
+        this.sizeOri[idx] = random(this.sizeRange[0], this.sizeRange[1]);
+      }
+
+      if (this.velRange) {
+        this.acc[idx] = random(this.velRange[0], this.velRange[1]);
+        this.vel[idx * 2 + 1] = this.acc[idx];
+      }
 
       // this.vel[idx * 2 + 1] = -15;
       // this.vel[idx * 2 + 1] = random(-5, -8);
@@ -109,10 +133,17 @@ class Particles {
     let a = this.age[i];
     let l = this.lifetime[i];
 
-    this.col[i * 4 + 3] = (a / l) * 255;
-    this.size[i] = 17 - (a / l * 17);
+    this.col[i * 4 + 3] = 255 - ((a / l) * 255);
 
-    this.vel[i + 0] += this.acc[0];
+    // this.size[i] = this.sizeOri[i] - (a / l * this.sizeOri[i]);
+
+    if (this.szSpeed === 0) {
+      this.size[i] = this.sizeOri[i];
+    } else {
+      this.size[i] = this.sizeOri[i] - (a / l * this.sizeOri[i]);
+    }
+
+    // this.vel[i + 0] += this.acc[0];
     // this.vel[i + 1] += this.acc[1];
   }
 
@@ -121,7 +152,7 @@ class Particles {
 
     if (this.timer > .01) {
       this.timer = 0;
-      for (let i = 0; i < particlesPerFrame; i++) {
+      for (let i = 0; i < this.rate; i++) {
         this.spawnParticle();
       }
     }
@@ -142,14 +173,19 @@ class Particles {
       this.col[i * 4 + 2],
       this.col[i * 4 + 3]);
 
-    // ellipse(x, y, this.size[i], this.size[i]);
-    rect(x, y, this.size[i], this.size[i]);
-    // imgScale, imgScale);
+    // stroke(this.col[i * 4 + 0],
+    //   this.col[i * 4 + 1],
+    //   this.col[i * 4 + 2],
+    //   this.col[i * 4 + 3]);
+
+    this.fn(x, y, i, this.size[i]);
+    // rect(x, y, this.size[i], this.size[i]);
   }
 
   draw() {
     noStroke();
     fill(255);
+    noFill();
 
     for (let i = 0; i < this.count; i++) {
       this.drawParticle(i);
@@ -158,7 +194,6 @@ class Particles {
 }
 
 class ImageMap {
-	
   constructor() {
     this.scale = 1;
     this.indices = [];
@@ -201,7 +236,9 @@ class ImageMap {
 }
 
 window.preload = function() {
-  img = loadImage('data/image/walk2.png', function(_img) {
+	img = loadImage('data/image/ghost.png', function(_img) {
+  // img = loadImage('data/image/bowser.png', function(_img) {
+  // img = loadImage('data/image/dd.gif', function(_img) {
     _img.loadPixels();
 
     imageMap = new ImageMap();
@@ -218,11 +255,34 @@ window.setup = function() {
 
   [WW, WH] = [windowWidth, windowHeight];
 
-  particles = new Particles({ count: 10000 });
+  particles = new Particles({
+    count: 10000,
+    sz: [4, 6],
+    rate: 30,
+    szSpeed: 0.3,
+    lifeTimeRange: [0.4, 1],
+    fn: function(x, y, i, sz) {
+      ellipse(x, y, sz, sz);
+    }
+  });
+
+  psys2 = new Particles({
+    count: 10000,
+    sz: [2, 5],
+    vel: [10, 100],
+    rate: 10,
+    szSpeed: 1,
+    lifeTimeRange: [0.4, 1],
+    fn: function(x, y, i, sz) {
+    	ellipse(x, y, sz, sz);
+      // line(x, y, x, y + 15);
+    }
+  });
 }
 
 function update(dt) {
   particles.update(dt);
+  psys2.update(dt);
 }
 
 window.draw = function() {
@@ -230,11 +290,19 @@ window.draw = function() {
 
   background(0);
   update(0.016);
+  rectMode(CENTER);
 
-  // push();
+  push();
+  translate(150, 150);
   // scale(6);
   // image(img, 0, 0);
   // pop();
 
   particles.draw();
+
+  // push();
+  // translate(0, -150);
+  psys2.draw();
+  // pop();
+  pop();
 }
