@@ -1,20 +1,27 @@
 'use strict';
 
 let img;
-let imgLoaded;
+
+let img2;
+let imageMap2;
+
+let imgLoaded = 0 ;
 let imageMap;
 let listed = false;
 let p;
 let WW, WH;
 
-let imgScale = 4;
+let imgScale = 3;
 
 let particles;
 let psys2;
+let psys3;
 
 class Particles {
   constructor(cfg) {
     this.timer = 0;
+
+    this.map = cfg.map;
 
     this.rate = cfg.rate || 10;
     this.szSpeed = cfg.szSpeed;
@@ -73,7 +80,9 @@ class Particles {
     if (idx > -1) {
       this._p = createVector();
       let c = [0, 0, 0, 0];
-      imageMap.getRandomPoint(this._p, c);
+
+      /// WTF?
+      this.map.getRandomPoint(this._p, c);
 
       this.col[idx * 4 + 0] = c[0];
       this.col[idx * 4 + 1] = c[1];
@@ -236,16 +245,23 @@ class ImageMap {
 }
 
 window.preload = function() {
-	img = loadImage('data/image/ghost.png', function(_img) {
-  // img = loadImage('data/image/bowser.png', function(_img) {
-  // img = loadImage('data/image/dd.gif', function(_img) {
+
+  img = loadImage('data/image/deadbeef_.png', function(_img) {
     _img.loadPixels();
 
     imageMap = new ImageMap();
     imageMap.load(_img);
     imageMap.setScale(imgScale);
 
-    imgLoaded = true;
+    imgLoaded++;
+  });
+
+  img2 = loadImage('data/image/nopsys.png', function(_img) {
+    _img.loadPixels();
+    imageMap2 = new ImageMap();
+    imageMap2.load(_img);
+    imageMap2.setScale(imgScale);
+    imgLoaded++;
   });
 }
 
@@ -256,17 +272,21 @@ window.setup = function() {
   [WW, WH] = [windowWidth, windowHeight];
 
   particles = new Particles({
+    map: imageMap,
     count: 10000,
-    sz: [4, 6],
-    rate: 30,
+    sz: [8, 8],
+    rate: 40,
     szSpeed: 0.3,
-    lifeTimeRange: [0.4, 1],
+    lifeTimeRange: [0.4, 0.6],
     fn: function(x, y, i, sz) {
-      ellipse(x, y, sz, sz);
+      rect(x, y, sz, sz);
+      // ellipse(x, y, sz, sz);
     }
   });
 
-  psys2 = new Particles({
+  // drip
+  psys3 = new Particles({
+    map: imageMap,
     count: 10000,
     sz: [2, 5],
     vel: [10, 100],
@@ -274,8 +294,23 @@ window.setup = function() {
     szSpeed: 1,
     lifeTimeRange: [0.4, 1],
     fn: function(x, y, i, sz) {
-    	ellipse(x, y, sz, sz);
+      ellipse(x, y, sz, sz);
       // line(x, y, x, y + 15);
+    }
+  });
+
+
+
+  // ;|
+  psys2 = new Particles({
+    map: imageMap2,
+    count: 10000,
+    sz: [4, 6],
+    rate: 5,
+    szSpeed: 0.3,
+    lifeTimeRange: [0.4, 1],
+    fn: function(x, y, i, sz) {
+      ellipse(x, y, sz, sz);
     }
   });
 }
@@ -283,10 +318,11 @@ window.setup = function() {
 function update(dt) {
   particles.update(dt);
   psys2.update(dt);
+  psys3.update(dt);
 }
 
 window.draw = function() {
-  if (!imgLoaded) { return; }
+  if (imgLoaded !== 2) { return; }
 
   background(0);
   update(0.016);
@@ -299,10 +335,11 @@ window.draw = function() {
   // pop();
 
   particles.draw();
+  psys3.draw();
 
-  // push();
-  // translate(0, -150);
+  push();
+  translate(0, 0);
   psys2.draw();
-  // pop();
+  pop();
   pop();
 }
