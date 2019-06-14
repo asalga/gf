@@ -5,17 +5,19 @@ let img;
 let img2;
 let imageMap2;
 
-let imgLoaded = 0 ;
+let imgLoaded = 0;
 let imageMap;
 let listed = false;
 let p;
 let WW, WH;
 
-let imgScale = 3;
+let imgScale = 5;
 
 let particles;
 let psys2;
 let psys3;
+let gfx;
+let lastTime = 0;
 
 class Particles {
   constructor(cfg) {
@@ -63,7 +65,7 @@ class Particles {
   }
 
   /*
-  	returns index of -1 if no free slots available
+    returns index of -1 if no free slots available
   */
   findDeadParticle() {
     for (let i = 0; i < this.count; i++) {
@@ -89,8 +91,8 @@ class Particles {
       this.col[idx * 4 + 2] = c[2];
       this.col[idx * 4 + 3] = c[3];
 
-      this.worldPos[idx * 2 + 0] = 0;//mouseX;
-      this.worldPos[idx * 2 + 1] = 0;//mouseY;
+      this.worldPos[idx * 2 + 0] = 0; //mouseX;
+      this.worldPos[idx * 2 + 1] = 0; //mouseY;
 
       this.pos[idx * 2 + 0] = this._p.x + this.worldPos[idx * 2 + 0] / imgScale;
       this.pos[idx * 2 + 1] = this._p.y + this.worldPos[idx * 2 + 1] / imgScale;
@@ -172,33 +174,41 @@ class Particles {
   }
 
   drawParticle(i) {
-    if (this.particleIsAlive(i) === false) { return; }
+    // if (this.particleIsAlive(i) === false) { return; }
+    // this.fn(x, y, i, this.size[i]);
+    // gfx.rect(x, y, this.size[i], this.size[i]);
+  }
 
-    let x = this.pos[i * 2 + 0] * imgScale;
-    let y = this.pos[i * 2 + 1] * imgScale;
+  draw() {
 
-    fill(this.col[i * 4 + 0],
-      this.col[i * 4 + 1],
-      this.col[i * 4 + 2],
-      this.col[i * 4 + 3]);
+    // fill(this.col[i * 4 + 0],
+    //   this.col[i * 4 + 1],
+    //   this.col[i * 4 + 2],
+    //   this.col[i * 4 + 3]);
 
     // stroke(this.col[i * 4 + 0],
     //   this.col[i * 4 + 1],
     //   this.col[i * 4 + 2],
     //   this.col[i * 4 + 3]);
 
-    this.fn(x, y, i, this.size[i]);
-    // rect(x, y, this.size[i], this.size[i]);
-  }
+    // fill(255, 0, 0);
 
-  draw() {
-    noStroke();
-    fill(255);
-    noFill();
-
+    stroke(255,0,0);
+    
+    beginShape(POINTS);
+    strokeWeight(10);
+    let x, y;
     for (let i = 0; i < this.count; i++) {
-      this.drawParticle(i);
+      x = this.pos[i * 2 + 0] * imgScale;
+      y = this.pos[i * 2 + 1] * imgScale;
+      
+
+
+      // this.drawParticle(i);
+      vertex(x, y);
     }
+    endShape();
+
   }
 }
 
@@ -265,21 +275,27 @@ window.preload = function() {
   });
 }
 
+
+
+
 window.setup = function() {
   createCanvas(windowWidth, windowHeight);
+  rectMode(CENTER);
   noSmooth();
 
   [WW, WH] = [windowWidth, windowHeight];
 
+  gfx = createGraphics(WW, WH);
+
   particles = new Particles({
     map: imageMap,
-    count: 10000,
-    sz: [8, 8],
-    rate: 40,
+    count: 1000,
+    sz: [4, 8],
+    rate: 10,
     szSpeed: 0.3,
     lifeTimeRange: [0.4, 0.6],
     fn: function(x, y, i, sz) {
-      rect(x, y, sz, sz);
+      // rect(x, y, sz, sz);
       // ellipse(x, y, sz, sz);
     }
   });
@@ -321,25 +337,29 @@ function update(dt) {
   psys3.update(dt);
 }
 
+
+
 window.draw = function() {
   if (imgLoaded !== 2) { return; }
 
+  let t0 = millis();
+
   background(0);
   update(0.016);
-  rectMode(CENTER);
 
   push();
   translate(150, 150);
-  // scale(6);
-  // image(img, 0, 0);
-  // pop();
-
   particles.draw();
-  psys3.draw();
+  //psys3.draw();
 
-  push();
-  translate(0, 0);
-  psys2.draw();
+  // push();
+  // translate(0, 0);
+  // psys2.draw();
+  // pop();
   pop();
-  pop();
+
+  let res = millis() - t0;
+
+  fill(255);
+  text(res, 30, 30);
 }
