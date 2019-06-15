@@ -1,14 +1,15 @@
-const MAX_SECONDS = 10;
+const MAX_SECONDS = 8;
 const MAX_SIZE = 400;
 
 const stayInBounds = false;
+let id = 0;
 
 let circles = [];
 let WW, WH;
 
-let circlesPreFrame = 50;
+let circlesPreFrame = 40;
 let maxAttempts = 1;
-let maxCircles = 700;
+let maxCircles = 400;
 
 let minSize = 1;
 
@@ -25,6 +26,7 @@ let playing = true;
 let timerStart = 0;
 
 function reset() {
+  id = 0;
   smooth();
   background(0);
   circles.length = 0;
@@ -100,9 +102,6 @@ function createCircle() {
 }
 
 
-
-
-
 window.setup = function() {
   createCanvas(windowWidth, windowHeight);
   smooth();
@@ -127,9 +126,9 @@ function drawWhiteBorders() {
 }
 
 window.draw = function() {
-  if(!playing) return;
+  if (!playing) return;
 
-  if (!canAddMore() || (millis()- timerStart)/1000 > MAX_SECONDS) {
+  if (!canAddMore() || (millis() - timerStart) / 1000 > MAX_SECONDS) {
     // save();
     playing = false;
     setTimeout(() => {
@@ -145,11 +144,11 @@ window.draw = function() {
     }
   }
 
-fill(255);
+  fill(255);
   stroke(255);
   // background(0);
   // text( (millis()) /1000, 40, 40) ;
-  
+
 
   translate(WW / 2, WH / 2);
 
@@ -157,10 +156,15 @@ fill(255);
   // stroke(255);
   // noFill();
   // ellipse(0, 0, parentSize * 2, parentSize * 2);
-  
+
   fill(255);
   noStroke();
-  circles.forEach(c => c.draw());
+  circles.forEach((v, i, a) => {
+    if (i === 1) {
+      fill(255, 0, 0);
+    }
+    v.draw();
+  });
 }
 
 function canAddMore() {
@@ -171,15 +175,23 @@ window.mousePressed = function() {
   reset();
 }
 
+
 class Circle {
   constructor(cfg) {
+    this.id = id;
+    id++;
     this.pos = cfg.pos;
     this.rad = cfg.rad;
     this.dist = dist(0, 0, this.pos.x, this.pos.y);
   }
 
   draw() {
-    fill(255);
+    if (this.id === 7) {
+      fill(255, 0, 0);
+    } else {
+      fill(255);
+    }
+
     // intentionally only use half the rad for sexy spacing
     let r = 1;
     ellipse(this.pos.x, this.pos.y, this.rad * r, this.rad * r);
