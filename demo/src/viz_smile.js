@@ -1,40 +1,46 @@
-const MAX_SECONDS = 8;
-const MAX_SIZE = 400;
+// Andor Saga
+// Circle packing study
 
+// Things learned: 
+//  - drawing an ellipse over and over again will remove the anti-aliasing
+
+// How many seconds should we spend trying to fill up the space?
+const MAX_SECONDS_PER_PIECE = 10;
+const MAX_CIRCLES_PER_PIECE = 1000;
+const MAX_SIZE = 300;
+
+// Should the circles be constrained within the parent? Setting to false
+// yields prettier renders
 const stayInBounds = false;
 let id = 0;
 
 let circles = [];
 let WW, WH;
 
-let circlesPreFrame = 40;
+// How many circles to add to the array per frame
+let circlesPreFrame = 150;
+
+// Per frame we'll likely select a random point that's already inside another circle, How
+// many failures should we allow before bailing and moving onto the next frame?
 let maxAttempts = 1;
-let maxCircles = 400;
-
 let minSize = 1;
-
-let maxSize = MAX_SIZE;
+let maxSize;
 let padding = 0;
-let reduce = 0.98;
 
-let parentSize;
 let maxViewport;
 let parent;
-let gfx;
-let images = [];
-let playing = true;
+let parentSize;
+
 let timerStart = 0;
 
 function reset() {
-  id = 0;
-  smooth();
   background(0);
+  id = 0;
   circles.length = 0;
   maxViewport = (WH / 2) * 0.75;
   parentSize = maxViewport;
+  maxSize = WH * 0.25;
   parent = new Circle({ pos: { x: 0, y: 0 }, rad: parentSize });
-  loop();
-  playing = true;
   timerStart = millis();
 }
 
@@ -79,7 +85,6 @@ function createCircle() {
     });
   }
 
-
   // Shrink the circle if necessary to keep it in bounds
   if (stayInBounds) {
     let d = dist(0, 0, p.x, p.y);
@@ -89,18 +94,15 @@ function createCircle() {
   }
 
   if (rad < minSize) {
-    console.log(rad);
     return;
   }
 
-
-  maxSize *= reduce;
+  // maxSize *= reduce;
   maxSize = constrain(maxSize, minSize, MAX_SIZE);
 
   let c = new Circle({ pos: p, rad: rad });
   circles.push(c);
 }
-
 
 window.setup = function() {
   createCanvas(windowWidth, windowHeight);
@@ -113,81 +115,68 @@ window.setup = function() {
   reset();
 }
 
-
-function drawWhiteBorders() {
-  noStroke();
-  fill(255);
-  let wh = WH * 0.05 * sin(millis() / 5000);
-
-  rect(0, 0, WW, wh);
-  rect(0, WH - wh, WW, wh);
-
-
-}
-
 window.draw = function() {
-  if (!playing) return;
+  // background(0);
 
-  if (!canAddMore() || (millis() - timerStart) / 1000 > MAX_SECONDS) {
-    // save();
-    playing = false;
-    setTimeout(() => {
-      reset();
-    }, 1000);
-
+  if (!canAddMore() || !hasMoreTime()) {
+    reset();
     return;
   }
 
   for (let i = 0; i < circlesPreFrame; i++) {
-    if (circles.length < maxCircles) {
+    if (circles.length < MAX_CIRCLES_PER_PIECE) {
       createCircle();
     }
   }
 
-  fill(255);
-  stroke(255);
-  // background(0);
-  // text( (millis()) /1000, 40, 40) ;
-
-
   translate(WW / 2, WH / 2);
 
-  // draw circle bounds
-  // stroke(255);
-  // noFill();
-  // ellipse(0, 0, parentSize * 2, parentSize * 2);
-
-  fill(255);
   noStroke();
-  circles.forEach((v, i, a) => {
-    if (i === 1) {
-      fill(255, 0, 0);
-    }
-    v.draw();
-  });
+  circles.forEach(c => c.draw());
+}
+
+function hasMoreTime() {
+  return (millis() - timerStart) / 1000 < MAX_SECONDS_PER_PIECE;
 }
 
 function canAddMore() {
-  return circles.length < maxCircles;
+  return circles.length < MAX_CIRCLES_PER_PIECE;
 }
 
-window.mousePressed = function() {
+function keyTyped(key) {
+  switch (key.code) {
+    case 'Space':
+      save();
+      break;
+    case 'KeyR':
+      reset();
+      break;
+  }
+}
+
+function mousePressed() {
   reset();
 }
 
 
 class Circle {
   constructor(cfg) {
-    this.id = id;
-    id++;
-    this.pos = cfg.pos;
-    this.rad = cfg.rad;
-    this.dist = dist(0, 0, this.pos.x, this.pos.y);
+    Object.assign(this, cfg);
+
+    this.pos = createVector(cfg.pos.x, cfg.pos.y);
+    this.dist = this.pos.mag();
+
+    this.id = id++;
+    this.hasBeenDrawn = false;
   }
 
   draw() {
-    if (this.id === 7) {
-      fill(255, 0, 0);
+    if (this.hasBeenDrawn) return;
+    this.hasBeenDrawn = true;
+
+    // TODO: fix
+    if (this.id === 3) {
+      fill(200, 0, 0);
     } else {
       fill(255);
     }
@@ -197,7 +186,6 @@ class Circle {
     ellipse(this.pos.x, this.pos.y, this.rad * r, this.rad * r);
   }
 }
-
 
 function getRandomPointInCircle(c, p) {
   let v = createVector(random(-1, 1), random(-1, 1));
