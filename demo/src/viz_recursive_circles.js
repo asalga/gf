@@ -1,30 +1,29 @@
-// Andor Saga
-// Circle packing study
-
-// Things learned: 
-//  - drawing an ellipse over and over again will remove the anti-aliasing
-
 // How many seconds should we spend trying to fill up the space?
-const MAX_SECONDS_PER_PIECE = 10;
-const MAX_CIRCLES_PER_PIECE = 1000;
-const MAX_SIZE = 300;
+const MAX_SECONDS_PER_PIECE = 5;
+const MAX_CIRCLES_PER_PIECE = 100;
+const MAX_SIZE = 100;
+let minSize = 100;
+let maxSize;
+
+let gfx
+
+let colors = [];
 
 // Should the circles be constrained within the parent circle bounds?
 // Setting to false yields prettier renders
-const stayInBounds = false;
+const stayInBounds = true;
 let p;
 
 let circles = [];
 let nextCircleIdx = 0;
 
 // How many circles to add to the array per frame
-let circlesPreFrame = 200;
+let circlesPreFrame = 1;
 
 // Per frame we'll likely select a random point that's already inside another circle, How
 // many failures should we allow before bailing and moving onto the next frame?
 let maxAttempts = 1;
-let minSize = 1;
-let maxSize;
+
 let padding = 0;
 
 let WW, WH;
@@ -39,12 +38,14 @@ function reset() {
   maxViewport = WW > WH ? WH : WW;
   maxViewport = (WH / 2) * 0.75;
 
-  maxSize = WH * 0.25;
+  maxSize = MAX_SIZE;
 
   nextCircleIdx = 0;
   for (let c of circles) { c.reset(); }
 
   parent.rad = maxViewport;
+
+  gfx = createGraphics(parent.rad, parent.rad);
 
   timerStart = millis();
 }
@@ -86,6 +87,7 @@ function createCircle() {
       if (d < shortestDistance) {
         shortestDistance = d;
         rad = d;
+        rad = constrain(rad, minSize, MAX_SIZE);
       }
     }
   }
@@ -116,6 +118,22 @@ window.setup = function() {
   createCanvas(windowWidth, windowHeight);
   smooth();
   background(0);
+  // frameRate(10);
+
+
+  //windowWidth,windowHeight);
+
+  colors.push(
+    // color(255, 255, 255),
+    // color(255, 0, 255),
+    // color(255, 128, 0),
+    // color(0, 0, 200),
+    // color(255, 255, 0),
+    // color(0, 255, 0)
+    color(255, 0, 0),
+    color(0, 255, 0),
+    color(0, 0, 255)
+  );
 
   p = createVector();
   parent = new Circle();
@@ -128,6 +146,8 @@ window.setup = function() {
 }
 
 window.draw = function() {
+  background(0);
+
   if (!canAddMore() || !hasMoreTime()) {
     reset();
     return;
@@ -136,6 +156,8 @@ window.draw = function() {
   for (let i = 0; i < circlesPreFrame; i++) {
     if (nextCircleIdx < MAX_CIRCLES_PER_PIECE) {
       createCircle();
+    } else {
+      // noLoop();
     }
   }
 
@@ -144,8 +166,17 @@ window.draw = function() {
   noStroke();
 
   for (let i = 0; i < nextCircleIdx; i++) {
+    circles[i].drawGfx(gfx);
+  }
+
+  for (let i = 0; i < nextCircleIdx; i++) {
     circles[i].draw();
   }
+
+  push();
+  translate(WW / 2, WH / 2);
+  // image(gfx, 0, 0);
+  pop();
 }
 
 function hasMoreTime() {
@@ -179,6 +210,7 @@ class Circle {
     this.id = getNextId();
     this.pos = createVector();
     this.reset();
+    this.col;
   }
 
   spawn() {
@@ -186,31 +218,56 @@ class Circle {
   }
 
   reset() {
+    this.col = colors[Math.floor(random(0, colors.length))];
     this.rad = 0;
     this.alive = false;
     this.hasBeenDrawn = false;
   }
 
+
   draw() {
+    push();
+
+    
+    // a bit too blurry....
+    push();
+    scale(2, 2);
+    translate(-gfx.width/2 + 20, -gfx.height/2 +20);
+    image(gfx, 0, 0);//this.pos.x * sc, this.pos.y * sc);
+    pop();
+
+
+
+
+    let sc = 3;
+    let t = 1 / sc;
+    scale(t);
+    image(gfx, this.pos.x * sc, this.pos.y * sc);
+
+    // translate(this.rad * 1.25, this.rad * 1.25);
+    // ellipse(this.pos.x * sc, this.pos.y * sc, sc * 100);
+    pop();
+  }
+
+  drawGfx(gfx) {
     if (!this.alive) return;
 
     if (this.hasBeenDrawn) return;
     this.hasBeenDrawn = true;
 
-    // TODO: fix
-    if (this.id === 5) {
-      fill(200, 0, 0);
-    } else {
-      fill(255);
-    }
+    gfx.noFill();
+    gfx.strokeWeight(2);
+    gfx.stroke(this.col);
 
+    gfx.push();
+    let r = this.rad / 2;
 
-    // intentionally only use half the rad for sexy spacing
-    let r = 1;
-    ellipse(this.pos.x, this.pos.y, this.rad * r, this.rad * r);
+    gfx.translate(gfx.width / 2, gfx.height / 2);
+    gfx.ellipse(this.pos.x / 2, this.pos.y / 2, r);
+    // gfx.ellipse(this.pos.x - gfx.width/4, this.pos.y - gfx.height/4, r);
+    gfx.pop();
   }
 }
-
 
 
 function getRandomPointInCircle(p, c) {
