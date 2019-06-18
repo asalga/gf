@@ -13,14 +13,72 @@ export default class Utils {
     return ++id;
   }
 
+  /*
+    returns true if the circle is completely contained inside the rectangle
+  */
+  static isCircleInsideRect(c, r) {
+    return c.x - c.r > r.x &&
+      c.x + c.r < r.x + r.w &&
+      c.y - c.r > r.y &&
+      c.y + c.r < r.y + r.h;
+  }
+
+  /*
+   */
+  static isPointInsideRect(p, r) {
+    return p.x >= r.x &&
+      p.x <= r.x + r.w &&
+      p.y >= r.y &&
+      p.y <= r.y + r.h;
+  }
+
+  /*
+   */
+  static isCircleIntersectingRect(c, r) {
+    let circleDistance = { x: 0, y: 0 };
+
+    circleDistance.x = abs(c.x - (r.x + r.w / 2));
+    circleDistance.y = abs(c.y - (r.y + r.h / 2));
+
+    if (circleDistance.x > (r.w / 2 + c.r)) {
+      return false;
+    }
+    if (circleDistance.y > (r.h / 2 + c.r)) {
+      return false;
+    }
+
+    if (circleDistance.x <= (r.w / 2)) {
+      return true;
+    }
+    if (circleDistance.y <= (r.h / 2)) {
+      return true;
+    }
+
+    let cornerDistance_sq =
+      (circleDistance.x - r.w / 2) * (circleDistance.x - r.w / 2) +
+      (circleDistance.y - r.h / 2) * (circleDistance.y - r.h / 2);
+
+    return (cornerDistance_sq <= (c.r * c.r));
+  }
+
+  static isCircleIntersectingCircle(c1, c2) {
+    let x = c1.x - c2.x;
+    let y = c1.y - c2.y;
+    let len = sqrt(x * x + y * y);
+    
+    return len < (c1.r + c2.r);
+  }
+
+
+
   static get undef() {
     return undefined;
   }
 
-  static repeat(arr, count){
+  static repeat(arr, count) {
     let arrCopy = arr.slice(0);
 
-    for(let i = 0; i < count; ++i){
+    for (let i = 0; i < count; ++i) {
       arr = arr.concat(arrCopy);
     }
     return arr;
@@ -29,9 +87,9 @@ export default class Utils {
   /*
     Returns Array
   */
-  static strIntersection(str1, str2){
+  static strIntersection(str1, str2) {
     let setB = new Set(str2);
-    let res = [...new Set(str1)].filter( x => setB.has(x));
+    let res = [...new Set(str1)].filter(x => setB.has(x));
     return res;
   }
 
@@ -63,8 +121,8 @@ export default class Utils {
     }
   }
 
-  static distance(p1, p2, d){
-    let res = Vec2.sub(p1,p2);
+  static distance(p1, p2, d) {
+    let res = Vec2.sub(p1, p2);
     d = res.mag();
   }
 
