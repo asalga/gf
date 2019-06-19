@@ -24,6 +24,17 @@ export default class Utils {
   }
 
   /*
+  */
+  static isPointIntersectingCircles(p, arr) {
+    return arr.some(c => Utils.isPointInsideCircle(p, c));
+  }
+
+  static isPointInsideCircle(p, c){
+    _len = distance(p,c);
+    return _len < c.radius;
+  }
+
+  /*
    */
   static isPointInsideRect(p, r) {
     return p.x >= r.x &&
@@ -65,11 +76,9 @@ export default class Utils {
     let x = c1.x - c2.x;
     let y = c1.y - c2.y;
     let len = sqrt(x * x + y * y);
-    
+
     return len < (c1.r + c2.r);
   }
-
-
 
   static get undef() {
     return undefined;

@@ -5,6 +5,10 @@ const MAX_DEPTH = 5;
 
 let nodeColors = [{ r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 0, b: 255 }];
 
+/*
+
+*/
+
 export default class QuadTree {
 
   /*
@@ -42,6 +46,35 @@ export default class QuadTree {
 
     // data
     this.entities = [];
+  }
+
+  /*
+  	Find which leaf node the given point resides in
+
+  	returns null if outside the quadtree
+  */
+  getLeafFromPoint(p) {
+    if (Utils.isPointInsideRect(p, this.bounds)) {
+
+      if (this.isLeaf) return this;
+
+      // Find the intersecting node
+      for (let i = 0; i < this.children.length; ++i) {
+        let found = this.children[i].getLeafFromPoint(p);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /*
+	b {Object} [in]
+  */
+  getBounds(b) {
+    Object.assign(b, { x: this.x, y: this.y, w: this.w, h: this.h });
   }
 
   /*
@@ -134,6 +167,12 @@ export default class QuadTree {
     noFill();
     rect(this.x, this.y, this.w - 2, this.h - 2);
 
+
+    // noStroke();
+    // fill(col.r, col.g, col.b, 40);
+    // rect(this.x, this.y, this.w - 2, this.h - 2);
+    textSize(20);
+    text(this.entities.length, this.x, this.y);
   }
 
   /*
