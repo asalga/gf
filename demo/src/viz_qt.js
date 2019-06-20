@@ -1,5 +1,12 @@
 'use strict';
 
+// import Pool from './core/Pool.js';
+import Circle from './collision/Circle.js';
+import Rectangle from './collision/Rectangle.js';
+import Point from './collision/Point.js';
+import Utils from './Utils.js';
+import QuadTree from './collision/QuadTree.js';
+
 // While setting the size of the circle, if the res
 // If the result of setting the size of the circle makes it intersect with
 // more than one quadrant, consider that invalid and try another point
@@ -16,27 +23,25 @@ const ALLOW_OVERLAP_QUADRANT = false;
 // end up overlapping adjacent quadrants.
 const CONSTRAIN_INSIDE_QUADRANT = true;
 
-// import Pool from './core/Pool.js';
-import Circle from './collision/Circle.js';
-import Rectangle from './collision/Rectangle.js';
-import Point from './collision/Point.js';
-import Utils from './Utils.js';
-import QuadTree from './collision/QuadTree.js';
-
+let distanceToCircle;
+let id = 0;
 let r, c, qt, e1, e2;
 let WW, WH;
-let minSize = 40;
-let maxSize = 40;
+let minSize = 6;
+let maxSize = 8;
+let maxAttempts = 2000;
+let padding = 1;
+let circlesPerFrame = 10000;
+
+let circleCount = 0;
 
 let circleDraw = function() {
-  stroke(255, 0, 0);
-  fill(0, 255, 0);
+  stroke(0);
+  fill(255);
   ellipse(this.x, this.y, this.r * 2);
 };
 
-let circleUpdate = function(dt) {
-  // debugger;
-}
+let circleUpdate = function(dt) {}
 
 class Entity {
   constructor(cfg) {
@@ -77,79 +82,37 @@ window.preload = function() {
 };
 
 window.setup = function() {
-  createCanvas(400, 400);
-  // WW = windowWidth;
-  // WH = windowHeight;
-  WW = width;
-  WH = height;
+  createCanvas(windowWidth, windowHeight);
+  WW = windowWidth;
+  WH = windowHeight;
 
   // r = new Rectangle({ x: 0, y: 0, w: 100, h: 150 });
+  // e1 = new Entity({ x: 100, y: 100, r: 50 });
+  // e2 = new Entity({ x: 100, y: 200, r: 50 });
 
-  qt = new QuadTree({ w: WW, h: WH, depth: 4 });
-
-  e1 = new Entity({ x: 100, y: 100, r: 50 });
-  e2 = new Entity({ x: 100, y: 200, r: 50 });
-  // qt.insert(e1);
-  // qt.insert(e2);
-
-  let b = new Rectangle();
-  qt.getBounds(b);
-
-  // get random point inside bounds
-  // let pnt = new Point({
-  let rx = random(b.x, b.x + b.w);
-  let ry = random(b.y, b.y + b.h);
-
-  let candiCircle = new Circle({ x: rx, y: ry });
-  candiCircle.draw = circleDraw;
-  candiCircle.update = circleUpdate;
-
-  let node = qt.getLeafFromPoint(candiCircle);
-
-  if (node.entities.length === 0) {
-    candiCircle.r = getRandomRadius();
-    constrainCircleInBounds(candiCircle, node);
-    node.entities.push(candiCircle);
-  }
-  // Is the randomized point inside any circles?
-  // if so, we'll need to try another random point.
-  else {
-    // // if (isPointIntersectingCircles(pnt, node.entities)) { invalid = true; }
-    // let distanceToCircle;
-    // circle = findClosestCircleToPoint(node.entities, pnt, distanceToCircle);
-
-    // // points is inside another circle
-    // if (distanceToCircle < 0) {
-    //   invalid = true;
-    //   numAttempts++;
-    // }
-
-    // c.radius = distanceToCircle - circle.radius - padding;
-    // constrainCircleInQuadrant(c, node);
-  }
+  qt = new QuadTree({ w: WW, h: WH, depth: 3 });
 
   // We'll need to handle the case if the new circle radius makes it intersect more than one quadrant
 };
 
+function findClosestCircleToPoint(circles, candiCircle) {
+  distanceToCircle = maxSize;
+  let idx = -1;
 
-/*
- */
-function constrainCircleInBounds(c, b) {
-  // right bounds
-  if (c.x + c.r > b.x + b.w) c.r = (b.x + b.w - c.x);
+  for (let i = 0; i < circles.length; i++) {
+    let d = getPointCircleDistance(candiCircle, circles[i]);
 
-  // left bounds
-  if (c.x - c.r < b.x) c.r = c.x - b.x;
+    if (d < distanceToCircle) {
+      distanceToCircle = d;
+      // console.log(d, i);
+      idx = i;
 
-  // lower bounds
-  if (c.y + c.r > b.y + b.h) c.r = (b.y + b.h - c.y);
+      // no point in continuing the loop if it's an invalid point
+      if (d < 0) return idx;
+    }
+  }
 
-  // upper bounds
-  if (c.y - c.r < b.y) c.r = c.y - b.y;
-}
-
-function getRandomRadius() {
-  return random(minSize, maxSize);
+  return idx;
 }
 
 function update(dt) {
@@ -157,23 +120,76 @@ function update(dt) {
 }
 
 window.draw = function() {
-  noLoop();
+  // noLoop();
   update(0.016);
 
-  background(100);
+  // background(100);
 
-  qt.debugDraw();
+  let b = qt.bounds;
+
+  let numAttempts = 0;
+  let added = 0;
+
+  for (let cc = 0; cc < 100; cc++) {
+
+    // get random point inside bounds
+    let rx = random(b.x, b.x + b.w);
+    let ry = random(b.y, b.y + b.h);
+
+    let candiCircle = new Circle({ x: rx, y: ry });
+    candiCircle.id = id++;
+    candiCircle.draw = circleDraw;
+    candiCircle.update = circleUpdate;
+    candiCircle.r = getRandomRadius();
+
+    let node = qt.getLeafFromPoint(candiCircle);
+
+    // let distanceToCircle = maxSize;
+    let invalidSpot = true;
+    let circleIdx;
+
+    // Make sure we didn't pick a point inside another circle
+    while (invalidSpot && numAttempts < maxAttempts) {
+      numAttempts++;
+      invalidSpot = false;
+
+      circleIdx = findClosestCircleToPoint(node.entities, candiCircle);
+
+      // points is inside another circle
+      if (distanceToCircle < 0) {
+        invalidSpot = true;
+      }
+    }
+
+    if (invalidSpot === false) {
+      candiCircle.r = distanceToCircle;
+
+      Utils.constrainCircleInRect(candiCircle, node, candiCircle.r);
+
+      // We just resized the circle, it may be too small,
+      // so reject if necessary.
+      if (candiCircle.r >= minSize) {
+        node.entities.push(candiCircle);
+        circleCount++;
+        added++;
+      }
+    }
+  }
+
+  console.log(added);
+
+  // qt.debugDraw();
   qt.draw();
 };
 
-// fill(100);
-// stroke(255);
-// rect(r.x, r.y, r.w, r.h);
-// if (Utils.isCircleInsideRect(c, r)) {
-// if (Utils.isPointInsideRect(c, r)) {
-// if (Utils.isCircleIntersectingRect(c, r)) {
-//   fill(255);
-// } else {
-//   fill(0);
-// }
-// ellipse(c.x, c.y, c.r * 2);
+function getPointCircleDistance(pnt, circle) {
+  return dist(pnt.x, pnt.y, circle.x, circle.y) - circle.r - padding;
+}
+
+function pointInCircle(pos, c) {
+  return dist(pos.x, pos.y, c.pos.x, c.pos.y) <= c.rad;
+}
+
+function getRandomRadius() {
+  return random(minSize, maxSize);
+}

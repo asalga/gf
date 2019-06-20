@@ -24,14 +24,52 @@ export default class Utils {
   }
 
   /*
-  */
+   */
   static isPointIntersectingCircles(p, arr) {
     return arr.some(c => Utils.isPointInsideCircle(p, c));
   }
 
-  static isPointInsideCircle(p, c){
-    _len = distance(p,c);
+  static isPointInsideCircle(p, c) {
+    _len = distance(p, c);
     return _len < c.radius;
+  }
+
+  /*
+    c - circle
+    r - rect
+    max - max radius
+  */
+  static constrainCircleInRect(c, r, max) {
+    let _r = max;
+    let _right = Infinity;
+    let _left = Infinity;
+    let _up = Infinity;
+    let _lower = Infinity;
+
+    // right
+    if (c.x + c.r > r.x + r.w) {
+      _r = min(_r, r.x + r.w - c.x);
+    }
+
+    // left
+    if (c.x - c.r < r.x) {
+      _r = min(_r, c.x - r.x);
+    }
+
+    // lower
+    if (c.y + c.r > r.y + r.h) {
+      _r = min(_r, r.y + r.h - c.y);
+    }
+
+    // upper
+    if (c.y - c.r < r.y){
+     _r = min(_r, c.y - r.y);
+    }
+
+    c.r = _r;
+    // if (_r < max) {
+    //   c.r = _r;
+    // }
   }
 
   /*

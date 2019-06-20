@@ -31,7 +31,7 @@ export default class QuadTree {
     // called from within the QuadTree
     if (this.parent) {
       this.nodeLevel = cfg.currDepth;
-      console.log(this.nodeLevel, this.name);
+      // console.log(this.nodeLevel, this.name);
 
       this.depth = this.parent.depth;
       this.subdivide(this, cfg.currDepth);
@@ -40,8 +40,14 @@ export default class QuadTree {
     else {
       this.parent = null;
       this.nodeLevel = 1;
-      console.log(this.nodeLevel, this.name);
-      this.subdivide(this, 1);
+
+      if (this.depth === 1) {
+      	this.isLeaf = true;
+      }
+      //
+      else {
+        this.subdivide(this, 1);
+      }
     }
 
     // data
@@ -159,7 +165,6 @@ export default class QuadTree {
     if (this.isLeaf === false) {
       this.children.forEach(c => c.debugDraw());
     }
-    // console.log(this.nodeLevel);
     // strokeWeight((this.nodeLevel % 3) + 1);
 
     let col = nodeColors[(this.nodeLevel - 1) % 3];
@@ -171,8 +176,8 @@ export default class QuadTree {
     // noStroke();
     // fill(col.r, col.g, col.b, 40);
     // rect(this.x, this.y, this.w - 2, this.h - 2);
-    textSize(20);
-    text(this.entities.length, this.x, this.y);
+    // textSize(20);
+    // text(this.entities.length, this.x, this.y);
   }
 
   /*
@@ -184,20 +189,6 @@ export default class QuadTree {
       this.children.forEach(c => c.draw());
     }
   }
-
-
-  //       // If we reached the number of levels the user wanted, we
-  //       // declare this node to be a leaf and back out.
-  //       if (d == level) {
-  //         isLeaf = true;
-  //         depth = d;
-  //         sprites = new ArrayList();
-  //         toRemove = new ArrayList();
-  //         return;
-  //       }
-
-
-
 }
 
 
