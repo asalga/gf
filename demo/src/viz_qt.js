@@ -120,10 +120,8 @@ function update(dt) {
 }
 
 window.draw = function() {
-  // noLoop();
   update(0.016);
-
-  // background(100);
+  background(100);
 
   let b = qt.bounds;
 
