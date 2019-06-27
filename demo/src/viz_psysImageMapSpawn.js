@@ -2,6 +2,9 @@
 
 let img;
 
+const MAX_RATE = 100;
+let r = 1;
+
 let img2;
 let imageMap2;
 
@@ -11,7 +14,7 @@ let listed = false;
 let p;
 let WW, WH;
 
-let imgScale = 5;
+let imgScale = 3;
 
 let particles;
 let psys2;
@@ -91,8 +94,8 @@ class Particles {
       this.col[idx * 4 + 2] = c[2];
       this.col[idx * 4 + 3] = c[3];
 
-      this.worldPos[idx * 2 + 0] = 0; //mouseX;
-      this.worldPos[idx * 2 + 1] = 0; //mouseY;
+      this.worldPos[idx * 2 + 0] = mouseX / 10;
+      this.worldPos[idx * 2 + 1] = mouseY / 10;
 
       this.pos[idx * 2 + 0] = this._p.x + this.worldPos[idx * 2 + 0] / imgScale;
       this.pos[idx * 2 + 1] = this._p.y + this.worldPos[idx * 2 + 1] / imgScale;
@@ -174,40 +177,68 @@ class Particles {
   }
 
   drawParticle(i) {
-    // if (this.particleIsAlive(i) === false) { return; }
-    // this.fn(x, y, i, this.size[i]);
+    if (this.particleIsAlive(i) === false) { return; }
+    this.fn(x, y, i, this.size[i]);
     // gfx.rect(x, y, this.size[i], this.size[i]);
   }
 
   draw() {
 
-    // fill(this.col[i * 4 + 0],
-    //   this.col[i * 4 + 1],
-    //   this.col[i * 4 + 2],
-    //   this.col[i * 4 + 3]);
-
-    // stroke(this.col[i * 4 + 0],
-    //   this.col[i * 4 + 1],
-    //   this.col[i * 4 + 2],
-    //   this.col[i * 4 + 3]);
-
     // fill(255, 0, 0);
+    noStroke(255, 0, 0);
 
-    stroke(255,0,0);
-    
     beginShape(POINTS);
-    strokeWeight(10);
+    strokeWeight(1);
+    // noFill();
+    // noFill(0);
+     // fill(255);
+
     let x, y;
     for (let i = 0; i < this.count; i++) {
-      x = this.pos[i * 2 + 0] * imgScale;
-      y = this.pos[i * 2 + 1] * imgScale;
-      
+
+      //     fill(this.col[i * 4 + 0],
+      // this.col[i * 4 + 1],
+      // this.col[i * 4 + 2],
+      // this.col[i * 4 + 3]);
+noStroke();
+noFill();
+if(mouseIsPressed == false){
+
+      fill(this.col[i * 4 + 0],
+        this.col[i * 4 + 1],
+        this.col[i * 4 + 2],
+        this.col[i * 4 + 3]
+      );
+    }
+    else{
+
+           stroke(this.col[i * 4 + 0],
+        this.col[i * 4 + 1],
+        this.col[i * 4 + 2],
+        this.col[i * 4 + 3]
+      ); 
+    }
+
+      // stroke(this.col[i * 4 + 0],
+      //   this.col[i * 4 + 1],
+      //   this.col[i * 4 + 2],
+      //   this.col[i * 4 + 3]
+      // );
+
+      x = this.pos[i * 2 + 0] * imgScale * 2.5;
+      y = this.pos[i * 2 + 1] * imgScale * 2.5;
+
+
+      ellipse(x, y, (this.age[i]) * 70);
+
+      // noFill();
+      // ellipse(x, y, (this.age[i]) * 90);
 
 
       // this.drawParticle(i);
-      vertex(x, y);
+      // vertex(x, y);
     }
-    endShape();
+    // endShape();
 
   }
 }
@@ -256,7 +287,7 @@ class ImageMap {
 
 window.preload = function() {
 
-  img = loadImage('data/image/deadbeef_.png', function(_img) {
+  img = loadImage('data/image/ghost_orig.png', function(_img) {
     _img.loadPixels();
 
     imageMap = new ImageMap();
@@ -282,6 +313,7 @@ window.setup = function() {
   createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
   noSmooth();
+  noCursor();
 
   [WW, WH] = [windowWidth, windowHeight];
 
@@ -289,11 +321,11 @@ window.setup = function() {
 
   particles = new Particles({
     map: imageMap,
-    count: 1000,
-    sz: [4, 8],
-    rate: 10,
-    szSpeed: 0.3,
-    lifeTimeRange: [0.4, 0.6],
+    count: 20000,
+    sz: [1, 5],
+    rate: r,
+    szSpeed: 2,
+    lifeTimeRange: [0.1, 0.475],
     fn: function(x, y, i, sz) {
       // rect(x, y, sz, sz);
       // ellipse(x, y, sz, sz);
@@ -303,12 +335,12 @@ window.setup = function() {
   // drip
   psys3 = new Particles({
     map: imageMap,
-    count: 10000,
-    sz: [2, 5],
+    count: 100,
+    sz: [2, 3],
     vel: [10, 100],
-    rate: 10,
+    rate: 0,
     szSpeed: 1,
-    lifeTimeRange: [0.4, 1],
+    lifeTimeRange: [0.2, 0.7],
     fn: function(x, y, i, sz) {
       ellipse(x, y, sz, sz);
       // line(x, y, x, y + 15);
@@ -320,8 +352,8 @@ window.setup = function() {
   // ;|
   psys2 = new Particles({
     map: imageMap2,
-    count: 10000,
-    sz: [4, 6],
+    count: 1000,
+    sz: [4, 2],
     rate: 5,
     szSpeed: 0.3,
     lifeTimeRange: [0.4, 1],
@@ -333,8 +365,8 @@ window.setup = function() {
 
 function update(dt) {
   particles.update(dt);
-  psys2.update(dt);
-  psys3.update(dt);
+  // psys2.update(dt);
+  // psys3.update(dt);
 }
 
 
@@ -344,12 +376,26 @@ window.draw = function() {
 
   let t0 = millis();
 
+  particles.rate += .1;
+  if (particles.rate > MAX_RATE) {
+    particles.rate = MAX_RATE;
+  }
+
   background(0);
   update(0.016);
 
   push();
   translate(150, 150);
+
+  // push();
+  // // scale(8, 8);
+  // translate(mouseX, mouseY);
+  // tint(65);
+  // image(img, 0, 0);
+  // pop();
+
   particles.draw();
+  // filter(BLUR,1);
   //psys3.draw();
 
   // push();
