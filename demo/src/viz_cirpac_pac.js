@@ -12,16 +12,16 @@
 const MAX_CIRCLES = 5000;
 let circles = new Array(MAX_CIRCLES);
 let ccount = 0;
-
+let __ = 60;
 let WW, WH;
 let bounds;
-let maxAttempts = 20;
-let circlesPreFrame = 5000;
+let maxAttempts = 100;
+let circlesPreFrame = 52000;
 
 let minSize = 1;
-let maxSize = 2;
+let maxSize = 3;
 
-let padding = 3;
+let padding = 0;
 let parentSize;
 let maxViewport;
 let parent;
@@ -42,7 +42,7 @@ window.setup = function() {
 }
 
 function reset() {
-  maxViewport = WH / 2 * 0.25;
+  maxViewport = WH / 2 * 0.125;
   parentSize = 100;
 
   ccount = 0;
@@ -66,12 +66,12 @@ function isCircleInsidePacman(circle, parentCircle, theta) {
     circleTheta += 360;
   }
 
-  if (circleTheta > (330 + mouthTheta) || circleTheta < 30 - mouthTheta) {
+  if (circleTheta > (360 - __ + mouthTheta) || circleTheta <  __ - mouthTheta) {
   // if (circleTheta > mouthTheta) {
-    return false;
+    return !false;
   }
 
-  return true;
+  return !true;
 }
 
 /*
@@ -146,7 +146,8 @@ function findFreeIndex() {
 }
 
 function update() {
-  mouthTheta = ((sin(millis() / 1000) + 1) / 2) * 30;
+  mouthTheta = abs(sin(millis()/2500)) * __;
+  //((abs(sin(millis() / 2000)))) * 60;
   // console.log(floor(mouthTheta));
 
   circles.forEach(c => {
@@ -173,11 +174,12 @@ window.draw = function() {
 
   push();
   translate(WW / 2, WH / 2);
-  stroke(255);
-  noFill();
-  line(-1000, 0, 1000, 0);
-  line(0, -10000, 0, 10000);
-  ellipse(0, 0, parentSize * 2);
+  // stroke(255);
+  // noFill();
+  fill(255);
+  // line(-1000, 0, 1000, 0);
+  // line(0, -10000, 0, 10000);
+  ellipse(0, 0, parentSize);
 
   noFill();
   stroke(255);
@@ -205,13 +207,13 @@ class Circle {
 
   reset() {
     this.rad = 0;
-    this.col = 200;
+    this.col = 0;
     this.alive = false;
   }
 
   draw() {
     // if (!this.alive) return;
-
+noStroke();
     fill(this.col);
     let r = this.rad * 2;
     ellipse(this.pos.x, this.pos.y, r, r);
