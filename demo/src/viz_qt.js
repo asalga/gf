@@ -1,4 +1,5 @@
 'use strict';
+// We'll need to handle the case if the new circle radius makes it intersect more than one quadrant
 
 // import Pool from './core/Pool.js';
 import Circle from './collision/Circle.js';
@@ -7,6 +8,7 @@ import Point from './collision/Point.js';
 import Utils from './Utils.js';
 import QuadTree from './collision/QuadTree.js';
 
+let test = 0;
 // While setting the size of the circle, if the res
 // If the result of setting the size of the circle makes it intersect with
 // more than one quadrant, consider that invalid and try another point
@@ -25,15 +27,14 @@ const CONSTRAIN_INSIDE_QUADRANT = true;
 
 let distanceToCircle;
 let id = 0;
-let r, c, qt, e1, e2;
-let WW, WH;
-let minSize = 6;
-let maxSize = 8;
-let maxAttempts = 2000;
-let padding = 1;
-let circlesPerFrame = 10000;
-
+let r, c, qt;
+let minSize = 1;
+let maxSize = 2;
+let maxAttemptsPerFrame = 120;
+let padding = 0;
+let circlesPerFrame = 100;
 let circleCount = 0;
+let depth = 1;
 
 let circleDraw = function() {
   stroke(0);
@@ -82,33 +83,28 @@ window.preload = function() {
 };
 
 window.setup = function() {
-  createCanvas(windowWidth, windowHeight);
-  WW = windowWidth;
-  WH = windowHeight;
+  // let [CW, CH] = [250 * 3, 250 * 3];
+  let [CW, CH] = [250 * 2, 250 * 2];
+  createCanvas(CW, CH);
 
-  // r = new Rectangle({ x: 0, y: 0, w: 100, h: 150 });
-  // e1 = new Entity({ x: 100, y: 100, r: 50 });
-  // e2 = new Entity({ x: 100, y: 200, r: 50 });
-
-  qt = new QuadTree({ w: WW, h: WH, depth: 3 });
-
-  // We'll need to handle the case if the new circle radius makes it intersect more than one quadrant
+  qt = new QuadTree({ w: CW, h: CH, depth: depth });
 };
 
 function findClosestCircleToPoint(circles, candiCircle) {
+  
   distanceToCircle = maxSize;
   let idx = -1;
 
   for (let i = 0; i < circles.length; i++) {
+    test++
     let d = getPointCircleDistance(candiCircle, circles[i]);
 
     if (d < distanceToCircle) {
       distanceToCircle = d;
-      // console.log(d, i);
       idx = i;
 
       // no point in continuing the loop if it's an invalid point
-      if (d < 0) return idx;
+      // if (d < 0) return idx;
     }
   }
 
@@ -121,14 +117,14 @@ function update(dt) {
 
 window.draw = function() {
   update(0.016);
-  background(100);
+  background(0);
 
   let b = qt.bounds;
 
   let numAttempts = 0;
   let added = 0;
 
-  for (let cc = 0; cc < 100; cc++) {
+  for (let cc = 0; cc < 1; cc++) {
 
     // get random point inside bounds
     let rx = random(b.x, b.x + b.w);
@@ -147,12 +143,12 @@ window.draw = function() {
     let circleIdx;
 
     // Make sure we didn't pick a point inside another circle
-    while (invalidSpot && numAttempts < maxAttempts) {
+    while (invalidSpot && numAttempts < maxAttemptsPerFrame) {
       numAttempts++;
       invalidSpot = false;
 
       circleIdx = findClosestCircleToPoint(node.entities, candiCircle);
-
+// console.log(node.entities.length)
       // points is inside another circle
       if (distanceToCircle < 0) {
         invalidSpot = true;
@@ -164,8 +160,8 @@ window.draw = function() {
 
       Utils.constrainCircleInRect(candiCircle, node, candiCircle.r);
 
-      // We just resized the circle, it may be too small,
-      // so reject if necessary.
+      // We just resized the circle. Make sure it's still above the 
+      // min size threshold.
       if (candiCircle.r >= minSize) {
         node.entities.push(candiCircle);
         circleCount++;
@@ -174,11 +170,24 @@ window.draw = function() {
     }
   }
 
-  console.log(added);
-
-  // qt.debugDraw();
+  qt.debugDraw();
   qt.draw();
+
+  drawCircleCount();
 };
+
+function drawCircleCount() {
+  fill(0);
+  stroke(255, 0, 0);
+  rect(18, 8, 90, 45);
+
+  fill(255);
+  noStroke();
+  text(`count: ${circleCount}`, 20, 22);
+  text(`time: ${floor(millis()/1000)}`, 20, 30);
+  text(`QT depth: ${depth}`, 20, 40);
+  text(`test: ${test}`, 20, 50);
+}
 
 function getPointCircleDistance(pnt, circle) {
   return dist(pnt.x, pnt.y, circle.x, circle.y) - circle.r - padding;
