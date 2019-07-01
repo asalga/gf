@@ -12,6 +12,8 @@ import pinky from './actors/pac/Pinky.js';
 import inky from './actors/pac/Inky.js';
 import clyde from './actors/pac/Clyde.js';
 
+import pacslider from './actors/pac_slider/PacSlider.js';
+
 let createFuncs = new Map([
   ['empty', empty],
   ['ball', ball],
@@ -20,7 +22,14 @@ let createFuncs = new Map([
   ['blinky', blinky],
   ['inky', inky],
   ['pinky', pinky],
-  ['clyde', clyde]
+  ['clyde', clyde],
+
+  // pac slider
+  ['pacslider', pacslider]
+  // ['food', food],
+  // ['fruit', fruit],
+  // ['fruit', fruit],
+  // ['exit', exit],
 ]);
 
 export default class gfEntityFactory {

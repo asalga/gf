@@ -26,9 +26,9 @@ let preloadCallback = function() {
 
   Renderer.init();
 
-  // let arr = ['blinky', 'pinky', 'clyde', 'clyde'];
+  let arr = ['blinky', 'pinky', 'clyde', 'inky'];
   // let arr = ['blinky', 'clyde', 'pinky'];
-  let arr = ['blinky'];
+  //let arr = ['blinky'];
   arr = Utils.repeat(arr, 25)
 
   arr.forEach(name => {

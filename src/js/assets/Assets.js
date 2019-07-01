@@ -20,6 +20,17 @@ let assetTypes = {
 let numAssetsLoaded = 0;
 let totalAssetsToLoad = 0;
 
+function logProgress() {
+  console.log(`-->preload progress: ${numAssetsLoaded}/${totalAssetsToLoad}`);
+}
+
+function increaseProgress(msg) {
+  numAssetsLoaded++;
+  console.log(msg);
+  logProgress();
+  Assets.isDone();
+}
+
 /*
 
 */
@@ -42,11 +53,11 @@ export default class Assets {
       manifest.images.forEach(v => {
         loadImage(v.path, p5img => {
           // that.images[v] = p5img;
-          numAssetsLoaded++;
+
           assetTypes['image'][v.name] = p5img;
 
-          Assets.isDone();
-          console.log('Asset: loaded image:', v.name);
+          let msg = `Asset: loaded image: ${v.path}`;
+          increaseProgress(msg);
         });
       });
     }
@@ -68,11 +79,11 @@ export default class Assets {
             });
           })
           .then(function(data) {
-            numAssetsLoaded++;
+
             assetTypes['animations'][data.n] = data.animations;
 
-            Assets.isDone();
-            console.log('Asset: loaded animation:', j.name);
+            let msg = `Asset: loaded animation: ${j.name}`;
+            increaseProgress(msg);
           });
       });
     }
@@ -94,10 +105,9 @@ export default class Assets {
             });
 
             assetTypes['atlas'][a.name] = atlas;
-            numAssetsLoaded++;
 
-            Assets.isDone();
-            console.log('Asset: loaded atlas:', a.name);
+            let msg = `Asset: loaded image: ${a.name}`;
+            increaseProgress(msg);
           };
           xhr.open('GET', a.metaPath);
           xhr.send();
@@ -125,8 +135,8 @@ export default class Assets {
             numAssetsLoaded++;
             assetTypes['json'][data.n] = data.json;
 
-            Assets.isDone();
-            console.log('Asset: loaded json:', j.name);
+            let msg = `Asset: loaded json: ${j.name}`;
+            increaseProgress(msg);
           });
       });
     }
@@ -159,9 +169,8 @@ export default class Assets {
             frag: shaders[1].src
           };
 
-          Assets.isDone();
-          console.log('Asset: loaded shader:', n);
-          numAssetsLoaded++;
+          let msg = `Asset: loaded shader: n`;
+          increaseProgress(msg);
         });
       });
     }
@@ -199,7 +208,7 @@ export default class Assets {
 
       for (let i = 0; i < assetKeys.length; i++) {
         let type = assetKeys[i];
-        
+
         if (assetTypes[type][assetName]) {
           return assetTypes[type][assetName];
         }
